@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "therapyboxng",
+    "slug": "therapyboxng",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/tbIcon.png",
+    "splash": {
+      "image": "./assets/splashScreen.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}
