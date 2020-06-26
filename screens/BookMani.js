@@ -4,7 +4,6 @@ import { Header, Icon, Card } from "react-native-elements";
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-
 const width = Dimensions.get("window").width
 export class BookMani extends Component {
 
@@ -85,7 +84,7 @@ export class BookMani extends Component {
 
                     <TextInput
                         keyboardType="default"
-                        // multiline={true}
+                        //  multiline={true}
                         numberOfLines={4}
                         placeholderTextColor="#a4a4a4"
                         style={{

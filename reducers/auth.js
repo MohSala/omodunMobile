@@ -4,8 +4,9 @@ import {
     CREATE_ACCOUNT_ACTION_TYPES,
     CHECK_ACCOUNT_ACTION_TYPES,
     VERIFY_USER_ACTION_TYPES,
-    ADD_EMAIL_ACTION_TYPES
-
+    ADD_EMAIL_ACTION_TYPES,
+    GET_USER_WALLET_ACTION_TYPES,
+    CREDIT_TRANSACTION_ACTION_TYPES
 } from '../actions/actionTypes'
 
 
@@ -20,6 +21,12 @@ const {
     LOGIN_WITH_PHONE_REJECTED,
     LOGIN_WITH_PHONE_REQUEST
 } = LOGIN_WITH_PHONE_ACTION_TYPES
+
+const {
+    CREDIT_TRANSACTION_FULFILLED,
+    CREDIT_TRANSACTION_REJECTED,
+    CREDIT_TRANSACTION_REQUEST
+} = CREDIT_TRANSACTION_ACTION_TYPES
 
 const {
     CREATE_ACCOUNT_REQUEST,
@@ -45,6 +52,12 @@ const {
     ADD_EMAIL_REQUEST
 } = ADD_EMAIL_ACTION_TYPES
 
+const {
+    GET_USER_WALLET_FULFILLED,
+    GET_USER_WALLET_REJECTED,
+    GET_USER_WALLET_REQUEST
+} = GET_USER_WALLET_ACTION_TYPES
+
 const initialState = {
     isAuthenticated: false,
     error: false,
@@ -53,15 +66,11 @@ const initialState = {
     resetDone: false,
     loading: false,
     loadingInvite: false,
-    // invited: false,
     user: null,
     allUsers: null,
     usersFetched: false,
     message: '',
     created: false,
-    // createdAdmin: false,
-    // blocked: false,
-    // unblocked: false,
 }
 
 const authReducer = (state = initialState, action) => {
@@ -87,6 +96,28 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 isAuthenticated: false,
+                error: true,
+                errorMsg: action.payload.response
+            }
+
+        case CREDIT_TRANSACTION_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: false
+            }
+
+        case CREDIT_TRANSACTION_FULFILLED:
+            return {
+                ...state,
+                loading: false,
+                data: action.payload
+            }
+
+        case CREDIT_TRANSACTION_REJECTED:
+            return {
+                ...state,
+                loading: false,
                 error: true,
                 errorMsg: action.payload.response
             }
@@ -176,6 +207,28 @@ const authReducer = (state = initialState, action) => {
             }
 
         case ADD_EMAIL_REJECTED:
+            return {
+                ...state,
+                loading: false,
+                error: true,
+                errorMsg: action.payload.response
+            }
+
+        case GET_USER_WALLET_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: false
+            }
+
+        case GET_USER_WALLET_FULFILLED:
+            return {
+                ...state,
+                loading: false,
+                data: action.payload
+            }
+
+        case GET_USER_WALLET_REJECTED:
             return {
                 ...state,
                 loading: false,

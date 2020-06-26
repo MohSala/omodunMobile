@@ -59,7 +59,7 @@ export class OTPValidation extends Component {
                 <View style={{ alignItems: "center" }}>
                     <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", width: width - 50, fontSize: 16, textAlign: "center", marginTop: 15 }}>
                         Enter the 5 digit authentication code
-    sent to <Text style={{ fontFamily: "Raleway-SemiBold", color: "#FFAC4A" }}>{mobile}</Text> via sms
+    sent to <Text style={{ fontFamily: "Raleway-SemiBold", color: "#E5B275" }}>{mobile}</Text> via sms
                     </Text>
 
                     <TextInput
@@ -79,7 +79,7 @@ export class OTPValidation extends Component {
                     >
                         <Text style={styles.textButton}>Continue</Text>
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", fontSize: 16, textAlign: "center", marginTop: 15 }}>Didn’t get code? <Text onPress={this.tapHere} style={{ fontFamily: "Raleway-SemiBold", color: "#FFAC4A" }}>Tap Here</Text></Text>
+                    <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", fontSize: 16, textAlign: "center", marginTop: 15 }}>Didn’t get code? <Text onPress={this.tapHere} style={{ fontFamily: "Raleway-SemiBold", color: "#E5B275" }}>Tap Here</Text></Text>
                 </View>
             </View>
         )
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: "center",
-        backgroundColor: "#FFAC4A",
+        backgroundColor: "#E5B275",
         padding: 10,
         width: width / 2,
         borderRadius: 10,

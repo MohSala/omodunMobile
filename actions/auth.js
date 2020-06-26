@@ -7,7 +7,9 @@ import {
     CREATE_ACCOUNT_ACTION_TYPES,
     CHECK_ACCOUNT_ACTION_TYPES,
     VERIFY_USER_ACTION_TYPES,
-    ADD_EMAIL_ACTION_TYPES
+    ADD_EMAIL_ACTION_TYPES,
+    GET_USER_WALLET_ACTION_TYPES,
+    CREDIT_TRANSACTION_ACTION_TYPES
 } from "./actionTypes";
 
 
@@ -16,6 +18,12 @@ const {
     LOGIN_WITH_PHONE_REJECTED,
     LOGIN_WITH_PHONE_REQUEST
 } = LOGIN_WITH_PHONE_ACTION_TYPES;
+
+const {
+    CREDIT_TRANSACTION_FULFILLED,
+    CREDIT_TRANSACTION_REJECTED,
+    CREDIT_TRANSACTION_REQUEST
+} = CREDIT_TRANSACTION_ACTION_TYPES
 
 const {
     CHECK_ACCOUNT_FULFILLED,
@@ -47,6 +55,12 @@ const {
     ADD_EMAIL_REQUEST
 } = ADD_EMAIL_ACTION_TYPES
 
+const {
+    GET_USER_WALLET_FULFILLED,
+    GET_USER_WALLET_REJECTED,
+    GET_USER_WALLET_REQUEST
+} = GET_USER_WALLET_ACTION_TYPES
+
 const BASE_URL = "http://127.0.0.1:7300";
 
 // THUNKS
@@ -59,11 +73,45 @@ const checkForUser = data => {
                 data
             )
             const dataCode = response.data
-            console.log(dataCode)
             return dispatch(checkUserFulfilled(dataCode));
         } catch (error) {
             console.log(e);
             dispatch(checkUserRejected(e));
+        }
+    }
+}
+
+const creditTransaction = data => {
+    return async (dispatch) => {
+        dispatch(creditTransactionRequest());
+        try {
+            const response = await axios.post(
+                `${BASE_URL}/creditTransaction`,
+                data
+            )
+            const dataCode = response.data
+            return dispatch(creditTransactionFulfilled(dataCode));
+        } catch (error) {
+            console.log(e);
+            dispatch(creditTransactionRejected(e));
+        }
+    }
+}
+
+const getWalletBalance = data => {
+    return async (dispatch) => {
+        dispatch(getWalletRequest());
+        try {
+            const response = await axios.get(
+                `${BASE_URL}/wallet?mobile=${data}`
+            )
+            const dataCode = response.data
+            const walletId = response.data.data._id;
+            await AsyncStorage.setItem("walletId", walletId);
+            return dispatch(getWalletFulfilled(dataCode));
+        } catch (error) {
+            console.log(e);
+            dispatch(getWalletRejected(e));
         }
     }
 }
@@ -79,6 +127,9 @@ const loginWithNumber = data => {
             const token = `Bearer ${response.data.data.token}`;
             const user = response.data.data;
             // save token and user details to local storage
+            const email = user.user.email
+            // save token and user details to local storage
+            await AsyncStorage.setItem("email", email)
             await AsyncStorage.setItem("token", token);
             await AsyncStorage.setItem("mobile", user.user.mobile)
             return dispatch(loginWithNumberFulfilled(user));
@@ -137,8 +188,9 @@ const addEmail = data => {
                 data
             );
             const user = response.data.data;
+            const email = user.email
             // save token and user details to local storage
-            // await AsyncStorage.setItem("mobile", user.mobile)
+            await AsyncStorage.setItem("email", email)
             return dispatch(addEmailFulfilled(user));
         } catch (e) {
             console.log(e);
@@ -196,6 +248,20 @@ const verifyUserOtpRejected = (data) => ({
     payload: data
 });
 
+const getWalletRequest = () => ({
+    type: GET_USER_WALLET_REQUEST,
+});
+
+const getWalletFulfilled = data => ({
+    type: GET_USER_WALLET_FULFILLED,
+    payload: data
+});
+
+const getWalletRejected = (data) => ({
+    type: GET_USER_WALLET_REJECTED,
+    payload: data
+});
+
 const checkUserRequest = () => ({
     type: CHECK_ACCOUNT_REQUEST,
 });
@@ -207,6 +273,20 @@ const checkUserFulfilled = user => ({
 
 const checkUserRejected = (data) => ({
     type: CHECK_ACCOUNT_REJECTED,
+    payload: data
+});
+
+const creditTransactionRequest = () => ({
+    type: CREDIT_TRANSACTION_REQUEST,
+});
+
+const creditTransactionFulfilled = user => ({
+    type: CREDIT_TRANSACTION_FULFILLED,
+    payload: user
+});
+
+const creditTransactionRejected = (data) => ({
+    type: CREDIT_TRANSACTION_REJECTED,
     payload: data
 });
 
@@ -259,5 +339,7 @@ export {
     checkForUser,
     verifyUserOtp,
     createAccount,
-    addEmail
+    addEmail,
+    getWalletBalance,
+    creditTransaction
 }

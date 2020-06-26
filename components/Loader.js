@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     loaderContainer: {
         height: 80,
         width: 80,
-        backgroundColor: '#FFAC4A',
+        backgroundColor: '#E5B275',
         display: 'flex',
         justifyContent: 'center',
         borderRadius: 12,

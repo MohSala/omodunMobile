@@ -13,7 +13,8 @@ export class Login extends Component {
     state = {
         password: "",
         errorMsg: "",
-        error: false
+        error: false,
+        show: false
     }
 
     handleSubmit = async () => {
@@ -28,8 +29,6 @@ export class Login extends Component {
         const { password } = this.state;
         const { navigation } = this.props;
         let mobile = navigation.getParam('mobile', 'none');
-        console.log("mobileNumber", mobile)
-        console.log("password", password);
         await this.props.loginWithNumber({ mobile, password });
         if (this.props.error) {
             Alert.alert("Ooopps!", this.props.errorMsg.data.message)
@@ -43,6 +42,7 @@ export class Login extends Component {
 
     render() {
         const { navigation, loading } = this.props;
+        const { show } = this.state;
         const mobile = navigation.getParam('mobile', 'none');
         return (
             <View style={{ flex: 1, backgroundColor: '#F8FFFF' }}>
@@ -64,12 +64,12 @@ export class Login extends Component {
                     <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", width: width - 50, fontSize: 16, textAlign: "center", marginTop: 15 }}>
                         Enter the password for
                     </Text>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", color: "#FFAC4A", textAlign: "center", fontSize: 16, }}>{mobile}</Text>
+                    <Text style={{ fontFamily: "Raleway-SemiBold", color: "#E5B275", textAlign: "center", fontSize: 16, }}>{mobile}</Text>
 
                     <TextInput
                         placeholder="Password"
                         keyboardType="default"
-                        secureTextEntry
+                        secureTextEntry={show ? false : true}
                         placeholderTextColor="#a4a4a4"
                         onChangeText={text => {
                             this.setState({ password: text })
@@ -78,7 +78,7 @@ export class Login extends Component {
                 </View>
                 <View style={{ flexDirection: "row" }}>
                     <View style={{ width: width / 1.9 }}>
-                        <Text style={{ fontFamily: "Raleway-Regular", color: "#FFAC4A", textAlign: "center", fontSize: 16, marginTop: 20 }}>Show Password</Text>
+                        <Text onPress={() => this.setState({ show: !show })} style={{ fontFamily: "Raleway-Regular", color: "#E5B275", textAlign: "center", fontSize: 16, marginTop: 20 }}>{show ? 'Hide' : 'Show'} Password</Text>
                     </View>
                 </View>
 
@@ -90,8 +90,8 @@ export class Login extends Component {
                         {!this.props.loading ? <Text style={styles.textButton}>Continue</Text> : <ActivityIndicator size="small" color="#fff" />}
 
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: "Raleway-Regular", color: "#FFAC4A", textAlign: "center", fontSize: 16, marginTop: 20 }}>Forgot Password?</Text>
-                    <Text style={{ fontFamily: "Raleway-Regular", color: "#FFAC4A", textAlign: "center", fontSize: 16, marginTop: 20 }}>Switch Account</Text>
+                    <Text style={{ fontFamily: "Raleway-Regular", color: "#E5B275", textAlign: "center", fontSize: 16, marginTop: 20 }}>Forgot Password?</Text>
+                    <Text style={{ fontFamily: "Raleway-Regular", color: "#E5B275", textAlign: "center", fontSize: 16, marginTop: 20 }}>Switch Account</Text>
 
                 </View>
 
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: "center",
-        backgroundColor: "#FFAC4A",
+        backgroundColor: "#E5B275",
         padding: 10,
         marginTop: 20,
         width: width - 50,

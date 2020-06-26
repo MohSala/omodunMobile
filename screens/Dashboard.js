@@ -1,44 +1,106 @@
 import React, { Component } from 'react'
 import {
-    AsyncStorage, Text,
+    AsyncStorage,
+    Modal,
+    Text,
     View,
-    Dimensions, StyleSheet, ImageBackground, Image, SafeAreaView, ScrollView, Button
+    Dimensions,
+    StyleSheet,
+    Image,
+    ScrollView
 } from 'react-native'
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+
 import { Header, Icon, Card } from "react-native-elements";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
-import image from "../assets/splashScreen.png"
 import HeaderComponent from "../components/Header"
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { connect } from "react-redux";
+import { getWalletBalance } from "../actions/auth";
 
 export class Dashboard extends Component {
+    state = {
+        modalVisible: false,
+        balance: 0
+    }
+
+    componentDidMount = async () => {
+        const mobile = await AsyncStorage.getItem("mobile");
+        await this.props.getWalletBalance(mobile);
+        if (this.props.data) {
+            return this.setState({
+                balance: this.props.data.data.availableBalance
+            })
+        }
+        else {
+            Alert.alert("Ooopps!", this.props.errorMsg.data.message)
+        }
+
+    }
+
+    setModalVisible = () => {
+
+        this.setState({ modalVisible: !this.state.modalVisible });
+    }
+
     render() {
+        const { modalVisible } = this.state;
         return (
-            // <SafeAreaView style={{
-            //     flex: 1
-            // }}>
-            <ScrollView style={{ backgroundColor: "#FFAC4A" }}>
-                {/* <ImageBackground source={image} style={styles.image}> */}
+            <ScrollView style={{ backgroundColor: "#F8FFFF" }}>
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                    }}
+                >
+                    <View style={styles.centeredView}>
+                        <TouchableOpacity style={{ left: SCREEN_WIDTH - 100 }} onPress={this.setModalVisible}>
+                            <AntDesign name="close" size={24} color="black" />
+                        </TouchableOpacity>
+
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={async () => {
+                                    await AsyncStorage.clear();
+                                    await this.props.navigation.navigate("Landing")
+                                }}
+                            >
+                                <Text style={styles.textButton}>LOGOUT</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
                 <Header
                     containerStyle={styles.header}
                     leftComponent={
                         <Icon
                             name='user-circle-o'
                             type='font-awesome'
-                            color="white"
-                            // size="30"
-                            onPress={() => this.props.navigation.navigate("Landing")}
+                            color="#E5B275"
+                            onPress={() => {
+                                this.setModalVisible();
+                            }}
                         />}
-                    centerComponent={<HeaderComponent />}
+                    centerComponent={<HeaderComponent balance={this.state.balance} />}
                     rightComponent={
                         <Icon
                             name='bell-o'
                             type='font-awesome'
-                            color="white"
-                            // size="30"
-                            onPress={() => this.props.navigation.navigate("Landing")}
+                            color="#E5B275"
+                            onPress={() => {
+                                this.setModalVisible();
+                            }}
                         />
                     }
                 />
+                <View style={{ alignItems: "center", justifyContent: "center", marginTop: 10 }}>
+                    <TouchableOpacity style={{ backgroundColor: "#E5B275", padding: 10, borderRadius: 10 }} onPress={this.componentDidMount}>
+                        <FontAwesome5 name="sync" color="white" />
+                    </TouchableOpacity>
+                </View>
 
                 <Card containerStyle={{ borderRadius: 10, shadowRadius: 25 }}>
                     <Text style={{ fontFamily: "Raleway-SemiBold", fontSize: 18, fontStyle: "normal", color: "#000" }}>Quick Actions</Text>
@@ -46,9 +108,9 @@ export class Dashboard extends Component {
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.navigate('BookMassage')
                         }}>
-                            <Card containerStyle={{ borderColor: "#FFAC4A", borderRadius: 10 }}>
+                            <Card containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}>
                                 <Image source={require("../assets/icons/footIcon.png")} style={styles.cardImage} />
-                                <Text style={{ fontFamily: "Raleway-Regular", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Book Massage</Text>
+                                <Text style={{ fontFamily: "Raleway-Bold", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Book Massage</Text>
 
                             </Card>
                         </TouchableOpacity>
@@ -56,9 +118,9 @@ export class Dashboard extends Component {
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.navigate('BookMani')
                         }}>
-                            <Card containerStyle={{ borderColor: "#FFAC4A", borderRadius: 10 }}>
+                            <Card containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}>
                                 <Image source={require("../assets/icons/pediIcon.png")} style={styles.cardImage} />
-                                <Text style={{ fontFamily: "Raleway-Regular", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Book Mani/Pedi</Text>
+                                <Text style={{ fontFamily: "Raleway-Bold", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Book Mani/Pedi</Text>
                             </Card>
                         </TouchableOpacity>
 
@@ -68,45 +130,59 @@ export class Dashboard extends Component {
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.navigate('BookHairDay')
                         }}>
-                            <Card containerStyle={{ borderColor: "#FFAC4A", borderRadius: 10 }}>
+                            <Card containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}>
                                 <Image source={require("../assets/icons/hairDayicon.png")} style={styles.cardImage} />
-                                <Text style={{ fontFamily: "Raleway-Regular", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Book Hair-Day</Text>
+                                <Text style={{ fontFamily: "Raleway-Bold", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Book Hair-Day</Text>
                             </Card>
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.navigate('TopUp')
                         }}>
-                            <Card containerStyle={{ borderColor: "#FFAC4A", borderRadius: 10 }}>
+                            <Card containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}>
                                 <Image source={require("../assets/icons/breadIcon.png")} style={styles.cardImage} />
-                                <Text style={{ fontFamily: "Raleway-Regular", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Top-Up Account</Text>
+                                <Text style={{ fontFamily: "Raleway-Bold", color: 'black', fontSize: 10, fontStyle: "normal", textAlign: "left" }}>Top-Up Account</Text>
                             </Card>
                         </TouchableOpacity>
                     </View>
                 </Card>
 
                 <Card containerStyle={{ borderRadius: 10 }}>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", fontSize: 18, fontStyle: "normal", fontWeight: "600", color: "#000", lineHeight: 19 }}>Latest Activities</Text>
+                    <Text style={{ fontFamily: "Raleway-SemiBold", fontSize: 18, fontStyle: "normal", color: "#000", lineHeight: 19 }}>Latest Activities</Text>
                     <View style={{ alignItems: "center", justifyContent: "center" }}>
-                        <Text style={{ fontFamily: "Raleway-Regular", fontSize: 18, fontStyle: "normal", fontWeight: "600", color: "#000", lineHeight: 19 }}>Nothing Yet!</Text>
+                        <Image source={require("../assets/icons/emptyBox.png")} style={styles.emptyBox} />
+
+                        <Text style={{ fontFamily: "Raleway-Regular", fontSize: 18, fontStyle: "normal", color: "#A4A4A4", textAlign: "center", marginTop: 10 }}>Nothing Yet! Top Up your account
+and get taken care of!</Text>
 
                     </View>
                 </Card>
-                {/* </ImageBackground> */}
-
             </ScrollView>
-            // </SafeAreaView>
         )
     }
 }
 
-export default Dashboard
+const mapDispatchToProps = dispatch => ({
+    getWalletBalance: data => dispatch(getWalletBalance(data))
+});
+
+const mapStateToProps = state => ({
+    loading: state.auth.loading,
+    data: state.auth.data,
+    error: state.auth.error,
+    errorMsg: state.auth.errorMsg
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Dashboard);
 
 const styles = StyleSheet.create({
     header: {
         backgroundColor: "transparent",
         justifyContent: 'space-around',
-        borderBottomColor: '#FFAC4A',
+        borderBottomColor: '#F8FFFF',
     },
     button: {
         alignItems: "center",
@@ -121,13 +197,20 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         resizeMode: "cover",
-        // justifyContent: "center"
     },
     cardImage: {
         width: 20,
         height: 20
     },
+    emptyBox: {
+        width: 150,
+        height: 150,
+        marginTop: 10
+    },
     textButton: {
         color: "#000"
-    }
+    },
+    centeredView: {
+        marginTop: 100
+    },
 })

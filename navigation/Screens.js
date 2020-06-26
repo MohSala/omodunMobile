@@ -10,6 +10,7 @@ import BookHairDay from "../screens/BookHairDay"
 import BookMani from "../screens/BookMani"
 import Dashboard from "../screens/Dashboard"
 import TopUp from "../screens/TopUp"
+import TopUpSuccess from "../screens/TopUpSuccess"
 
 const HomeStack = createStackNavigator(
     {
@@ -18,6 +19,7 @@ const HomeStack = createStackNavigator(
         BookMani,
         BookHairDay,
         TopUp,
+        TopUpSuccess
     },
     {
         defaultNavigationOptions: {
