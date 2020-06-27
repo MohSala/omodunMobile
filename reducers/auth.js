@@ -6,7 +6,8 @@ import {
     VERIFY_USER_ACTION_TYPES,
     ADD_EMAIL_ACTION_TYPES,
     GET_USER_WALLET_ACTION_TYPES,
-    CREDIT_TRANSACTION_ACTION_TYPES
+    CREDIT_TRANSACTION_ACTION_TYPES,
+    GET_TRANSACTION_ACTION_TYPES
 } from '../actions/actionTypes'
 
 
@@ -21,6 +22,12 @@ const {
     LOGIN_WITH_PHONE_REJECTED,
     LOGIN_WITH_PHONE_REQUEST
 } = LOGIN_WITH_PHONE_ACTION_TYPES
+
+const {
+    GET_TRANSACTION_FULFILLED,
+    GET_TRANSACTION_REJECTED,
+    GET_TRANSACTION_REQUEST
+} = GET_TRANSACTION_ACTION_TYPES
 
 const {
     CREDIT_TRANSACTION_FULFILLED,
@@ -229,6 +236,28 @@ const authReducer = (state = initialState, action) => {
             }
 
         case GET_USER_WALLET_REJECTED:
+            return {
+                ...state,
+                loading: false,
+                error: true,
+                errorMsg: action.payload.response
+            }
+
+        case GET_TRANSACTION_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: false
+            }
+
+        case GET_TRANSACTION_FULFILLED:
+            return {
+                ...state,
+                loading: false,
+                data: action.payload
+            }
+
+        case GET_TRANSACTION_REJECTED:
             return {
                 ...state,
                 loading: false,

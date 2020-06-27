@@ -9,7 +9,8 @@ import {
     VERIFY_USER_ACTION_TYPES,
     ADD_EMAIL_ACTION_TYPES,
     GET_USER_WALLET_ACTION_TYPES,
-    CREDIT_TRANSACTION_ACTION_TYPES
+    CREDIT_TRANSACTION_ACTION_TYPES,
+    GET_TRANSACTION_ACTION_TYPES
 } from "./actionTypes";
 
 
@@ -18,6 +19,12 @@ const {
     LOGIN_WITH_PHONE_REJECTED,
     LOGIN_WITH_PHONE_REQUEST
 } = LOGIN_WITH_PHONE_ACTION_TYPES;
+
+const {
+    GET_TRANSACTION_FULFILLED,
+    GET_TRANSACTION_REJECTED,
+    GET_TRANSACTION_REQUEST
+} = GET_TRANSACTION_ACTION_TYPES
 
 const {
     CREDIT_TRANSACTION_FULFILLED,
@@ -112,6 +119,22 @@ const getWalletBalance = data => {
         } catch (error) {
             console.log(e);
             dispatch(getWalletRejected(e));
+        }
+    }
+}
+
+const getMyTransaction = data => {
+    return async (dispatch) => {
+        dispatch(getMyTransactionRequest());
+        try {
+            const response = await axios.get(
+                `${BASE_URL}/transactions?walletId=${data}`
+            )
+            const dataCode = response.data
+            return dispatch(getMyTransactionFulfilled(dataCode));
+        } catch (error) {
+            console.log(e);
+            dispatch(getMyTransactionRejected(e));
         }
     }
 }
@@ -262,6 +285,20 @@ const getWalletRejected = (data) => ({
     payload: data
 });
 
+const getMyTransactionRequest = () => ({
+    type: GET_TRANSACTION_REQUEST,
+});
+
+const getMyTransactionFulfilled = data => ({
+    type: GET_TRANSACTION_FULFILLED,
+    payload: data
+});
+
+const getMyTransactionRejected = (data) => ({
+    type: GET_TRANSACTION_REJECTED,
+    payload: data
+});
+
 const checkUserRequest = () => ({
     type: CHECK_ACCOUNT_REQUEST,
 });
@@ -341,5 +378,6 @@ export {
     createAccount,
     addEmail,
     getWalletBalance,
-    creditTransaction
+    creditTransaction,
+    getMyTransaction
 }
