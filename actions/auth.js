@@ -10,7 +10,9 @@ import {
     ADD_EMAIL_ACTION_TYPES,
     GET_USER_WALLET_ACTION_TYPES,
     CREDIT_TRANSACTION_ACTION_TYPES,
-    GET_TRANSACTION_ACTION_TYPES
+    GET_TRANSACTION_ACTION_TYPES,
+    GET_FEW_TRANSACTION_ACTION_TYPES,
+    REGISTER_A_TASK_ACTION_TYPES
 } from "./actionTypes";
 
 
@@ -19,6 +21,18 @@ const {
     LOGIN_WITH_PHONE_REJECTED,
     LOGIN_WITH_PHONE_REQUEST
 } = LOGIN_WITH_PHONE_ACTION_TYPES;
+
+const {
+    REGISTER_A_TASK_FULFILLED,
+    REGISTER_A_TASK_REJECTED,
+    REGISTER_A_TASK_REQUEST
+} = REGISTER_A_TASK_ACTION_TYPES
+
+const {
+    GET_FEW_TRANSACTION_FULFILLED,
+    GET_FEW_TRANSACTION_REJECTED,
+    GET_FEW_TRANSACTION_REQUEST
+} = GET_FEW_TRANSACTION_ACTION_TYPES;
 
 const {
     GET_TRANSACTION_FULFILLED,
@@ -105,6 +119,23 @@ const creditTransaction = data => {
     }
 }
 
+const registerTask = data => {
+    return async (dispatch) => {
+        dispatch(registerTaskRequest());
+        try {
+            const response = await axios.post(
+                `${BASE_URL}/registerTask`,
+                data
+            )
+            const dataCode = response.data
+            return dispatch(registerTaskFulfilled(dataCode));
+        } catch (e) {
+            console.log(e);
+            dispatch(registerTaskRejected(e));
+        }
+    }
+}
+
 const getWalletBalance = data => {
     return async (dispatch) => {
         dispatch(getWalletRequest());
@@ -135,6 +166,22 @@ const getMyTransaction = data => {
         } catch (error) {
             console.log(e);
             dispatch(getMyTransactionRejected(e));
+        }
+    }
+}
+
+const getFewTransaction = data => {
+    return async (dispatch) => {
+        dispatch(getFewTransactionRequest());
+        try {
+            const response = await axios.get(
+                `${BASE_URL}/latestActivity?walletId=${data}`
+            )
+            const dataCode = response.data
+            return dispatch(getFewTransactionFulfilled(dataCode));
+        } catch (error) {
+            console.log(e);
+            dispatch(getFewTransactionRejected(e));
         }
     }
 }
@@ -299,6 +346,34 @@ const getMyTransactionRejected = (data) => ({
     payload: data
 });
 
+const getFewTransactionRequest = () => ({
+    type: GET_FEW_TRANSACTION_REQUEST,
+});
+
+const getFewTransactionFulfilled = data => ({
+    type: GET_FEW_TRANSACTION_FULFILLED,
+    payload: data
+});
+
+const getFewTransactionRejected = (data) => ({
+    type: GET_FEW_TRANSACTION_REJECTED,
+    payload: data
+});
+
+const registerTaskRequest = () => ({
+    type: REGISTER_A_TASK_REQUEST,
+});
+
+const registerTaskFulfilled = data => ({
+    type: REGISTER_A_TASK_FULFILLED,
+    payload: data
+});
+
+const registerTaskRejected = (data) => ({
+    type: REGISTER_A_TASK_REJECTED,
+    payload: data
+});
+
 const checkUserRequest = () => ({
     type: CHECK_ACCOUNT_REQUEST,
 });
@@ -379,5 +454,7 @@ export {
     addEmail,
     getWalletBalance,
     creditTransaction,
-    getMyTransaction
+    getMyTransaction,
+    getFewTransaction,
+    registerTask
 }

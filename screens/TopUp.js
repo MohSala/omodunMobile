@@ -4,6 +4,7 @@ import { Header, Icon } from "react-native-elements";
 import { connect } from "react-redux";
 import { creditTransaction } from "../actions/auth";
 import PaystackWebView from 'react-native-paystack-webview';
+import Loader from "../components/Loader";
 
 
 const width = Dimensions.get("window").width
@@ -30,6 +31,7 @@ export class TopUp extends Component {
         const { walletId, mobile, amount } = this.state
         return (
             <View style={{ flex: 1, backgroundColor: '#F8FFFF' }}>
+                {this.props.loading && <Loader />}
                 <Header
                     containerStyle={styles.header}
                     leftComponent={

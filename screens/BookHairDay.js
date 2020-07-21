@@ -59,14 +59,13 @@ export class BookHairDay extends Component {
 
                     <TextInput
                         keyboardType="default"
-                        multiline={true}
                         numberOfLines={4}
                         placeholderTextColor="#a4a4a4"
                         style={{
                             height: 100,
                             padding: 10,
                             width: width - 50,
-                            marginTop: 20, borderColor: '#a4a4a4', color: "#a4a4a4", borderWidth: 0.5, borderRadius: 10, fontFamily: "Raleway-Regular", fontSize: 15
+                            marginTop: 20, borderColor: '#a4a4a4', color: "#a4a4a4", borderWidth: 3, borderRadius: 0, fontFamily: "Raleway-Regular", fontSize: 15
                         }} />
 
                     <Text style={styles.priceText}>PRICE</Text>
@@ -133,7 +132,7 @@ const styles = StyleSheet.create({
     },
     DateButton: {
         alignItems: "center",
-        backgroundColor: "#FFAC4A",
+        backgroundColor: "#E5B275",
         padding: 10,
         width: width,
         paddingTop: 15,

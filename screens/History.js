@@ -1,30 +1,26 @@
 import React, { Component } from 'react'
-import { AsyncStorage, RefreshControl, Text, View, StyleSheet, Dimensions, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native'
-import { Header, Icon, Card, ButtonGroup, ListItem } from "react-native-elements";
+import { Modal, AsyncStorage, RefreshControl, Text, View, StyleSheet, Dimensions, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { Header, Icon, PricingCard, ButtonGroup, ListItem } from "react-native-elements";
 import { connect } from "react-redux";
 import { getMyTransaction } from "../actions/auth";
 import Loader from "../components/Loader";
 import dayjs from 'dayjs'
+import BottomSheet from "../components/BottomSheet"
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
+
 
 const width = Dimensions.get("window").width
-// const list = [
-//     {
-//         name: 'Body Massage',
-//         subtitle: '2020-12-12 21:29:30',
-//         status: "Successful"
-//     },
-//     {
-//         name: 'Mani/Pedi',
-//         subtitle: '2020-12-12 21:29:30',
-//         status: "Failed"
-//     }
-// ]
+
 export class History extends Component {
 
     state = {
         selectedIndex: 0,
         refresh: false,
-        list: []
+        list: [],
+        selectedTransaction: {},
+        initialSnap: false,
+        modalVisible: false
     }
 
     componentDidMount = async () => {
@@ -39,6 +35,10 @@ export class History extends Component {
         }
     }
 
+    setModalVisible = () => {
+        this.setState({ modalVisible: !this.state.modalVisible });
+    }
+
     updateIndex(selectedIndex) {
         this.setState({ selectedIndex })
         console.log("selectedIndex", selectedIndex);
@@ -49,13 +49,44 @@ export class History extends Component {
         await this.componentDidMount()
         await this.setState({ refreshing: false });
     }
+    handleClick = async (e, item) => {
+        await this.setState({
+            selectedTransaction: item,
+            modalVisible: true
+        })
+    }
 
 
     render() {
         const buttons = ['All', 'Successful', 'Pending']
-        const { selectedIndex, refresh } = this.state
+        const { selectedIndex, refresh, selectedTransaction, modalVisible } = this.state
         return (
             <View style={{ flex: 1, backgroundColor: '#F8FFFF' }}>
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={modalVisible}
+                >
+                    <View style={styles.centeredView}>
+                        <TouchableOpacity style={{ left: SCREEN_WIDTH - 100 }} onPress={this.setModalVisible}>
+                            <AntDesign name="close" size={24} color="black" />
+                        </TouchableOpacity>
+
+                        <View style={{ alignItems: "center" }}>
+                            <Text style={{ color: "#FFAC4A", fontFamily: "Raleway-Bold", fontSize: 24 }}>Transaction</Text>
+                            <PricingCard
+                                color="#2b2424"
+                                containerStyle={{ width: SCREEN_WIDTH - 50, borderRadius: 10 }}
+                                title={selectedTransaction.description}
+                                price={`N${parseInt(selectedTransaction.amount).toFixed(2)}`}
+                                info={[selectedTransaction.type, selectedTransaction.status, selectedTransaction.reference]}
+                                titleStyle={{ fontFamily: "Raleway-Bold" }}
+                                button={{ title: dayjs(selectedTransaction.createdAt).format("dddd, MMMM D YYYY, h:mm:ss a") }}
+                            />
+
+                        </View>
+                    </View>
+                </Modal>
                 <Header
                     containerStyle={styles.header}
                     centerComponent={{ text: "Transactions", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
@@ -78,6 +109,7 @@ export class History extends Component {
                         this.state.list.map((l, i) => (
                             <ListItem
                                 key={i}
+                                onPress={((e) => this.handleClick(e, l))}
                                 containerStyle={{ backgroundColor: "#F8FFFF" }}
                                 leftAvatar={{ source: require("../assets/icons/transactions.png") }}
                                 title={l.description}
@@ -151,5 +183,8 @@ const styles = StyleSheet.create({
         width: width,
         paddingTop: 15,
         paddingBottom: 15,
-    }
+    },
+    centeredView: {
+        marginTop: 100
+    },
 })

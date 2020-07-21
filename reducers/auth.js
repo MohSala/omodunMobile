@@ -7,10 +7,23 @@ import {
     ADD_EMAIL_ACTION_TYPES,
     GET_USER_WALLET_ACTION_TYPES,
     CREDIT_TRANSACTION_ACTION_TYPES,
-    GET_TRANSACTION_ACTION_TYPES
+    GET_TRANSACTION_ACTION_TYPES,
+    GET_FEW_TRANSACTION_ACTION_TYPES,
+    REGISTER_A_TASK_ACTION_TYPES
 } from '../actions/actionTypes'
 
 
+const {
+    GET_FEW_TRANSACTION_FULFILLED,
+    GET_FEW_TRANSACTION_REJECTED,
+    GET_FEW_TRANSACTION_REQUEST
+} = GET_FEW_TRANSACTION_ACTION_TYPES;
+
+const {
+    REGISTER_A_TASK_FULFILLED,
+    REGISTER_A_TASK_REJECTED,
+    REGISTER_A_TASK_REQUEST
+} = REGISTER_A_TASK_ACTION_TYPES
 // const {
 //     FORGOT_PASSWORD_REQUEST,
 //     FORGOT_PASSWORD_FULFILLED,
@@ -78,6 +91,8 @@ const initialState = {
     usersFetched: false,
     message: '',
     created: false,
+    task: null,
+    transactions: null
 }
 
 const authReducer = (state = initialState, action) => {
@@ -258,6 +273,50 @@ const authReducer = (state = initialState, action) => {
             }
 
         case GET_TRANSACTION_REJECTED:
+            return {
+                ...state,
+                loading: false,
+                error: true,
+                errorMsg: action.payload.response
+            }
+
+        case GET_FEW_TRANSACTION_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: false
+            }
+
+        case GET_FEW_TRANSACTION_FULFILLED:
+            return {
+                ...state,
+                loading: false,
+                transactions: action.payload
+            }
+
+        case GET_FEW_TRANSACTION_REJECTED:
+            return {
+                ...state,
+                loading: false,
+                error: true,
+                errorMsg: action.payload.response
+            }
+
+        case REGISTER_A_TASK_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: false
+            }
+
+        case REGISTER_A_TASK_FULFILLED:
+            return {
+                ...state,
+                loading: false,
+                task: action.payload
+            }
+
+        case REGISTER_A_TASK_REJECTED:
             return {
                 ...state,
                 loading: false,

@@ -9,20 +9,6 @@ export class Header extends React.Component {
         balance: 0
     }
 
-    // componentDidMount = async () => {
-    //     const mobile = await AsyncStorage.getItem("mobile");
-    //     await this.props.getWalletBalance(mobile);
-    //     if (this.props.data) {
-    //         return this.setState({
-    //             balance: this.props.data.data.availableBalance
-    //         })
-    //     }
-    //     else {
-    //         Alert.alert("Ooopps!", this.props.errorMsg.data.message)
-    //     }
-
-    // }
-
     viewBalance = () => {
         return this.setState({
             showBalance: !this.state.showBalance
