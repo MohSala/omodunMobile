@@ -4,7 +4,7 @@ import Landing from "../screens/Landing";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import OTPValidation from "../screens/OTPValidation"
-import BookMassage from "../screens/BookMassage"
+
 import AddEmail from "../screens/AddEmail"
 
 export default createStackNavigator(
@@ -13,7 +13,6 @@ export default createStackNavigator(
         OTPValidation,
         Login,
         Register,
-        BookMassage,
         AddEmail
     },
     {

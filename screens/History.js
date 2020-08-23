@@ -23,38 +23,38 @@ export class History extends Component {
         modalVisible: false
     }
 
-    componentDidMount = async () => {
-        const walletId = await AsyncStorage.getItem("walletId");
-        await this.props.getMyTransaction(walletId);
-        if (this.props.data) {
-            return this.setState({
-                list: this.props.data.data
-            })
-        } else {
-            Alert.alert("Ooopps!", this.props.errorMsg.data.message)
-        }
-    }
+    // componentDidMount = async () => {
+    //     const walletId = await AsyncStorage.getItem("walletId");
+    //     await this.props.getMyTransaction(walletId);
+    //     if (this.props.data) {
+    //         return this.setState({
+    //             list: this.props.data.data
+    //         })
+    //     } else {
+    //         Alert.alert("Ooopps!", this.props.errorMsg.data.message)
+    //     }
+    // }
 
-    setModalVisible = () => {
-        this.setState({ modalVisible: !this.state.modalVisible });
-    }
+    // setModalVisible = () => {
+    //     this.setState({ modalVisible: !this.state.modalVisible });
+    // }
 
-    updateIndex(selectedIndex) {
-        this.setState({ selectedIndex })
-        console.log("selectedIndex", selectedIndex);
-    }
+    // updateIndex(selectedIndex) {
+    //     this.setState({ selectedIndex })
+    //     console.log("selectedIndex", selectedIndex);
+    // }
 
-    onRefresh = async () => {
-        await this.setState({ refreshing: true });
-        await this.componentDidMount()
-        await this.setState({ refreshing: false });
-    }
-    handleClick = async (e, item) => {
-        await this.setState({
-            selectedTransaction: item,
-            modalVisible: true
-        })
-    }
+    // onRefresh = async () => {
+    //     await this.setState({ refreshing: true });
+    //     await this.componentDidMount()
+    //     await this.setState({ refreshing: false });
+    // }
+    // handleClick = async (e, item) => {
+    //     await this.setState({
+    //         selectedTransaction: item,
+    //         modalVisible: true
+    //     })
+    // }
 
 
     render() {
@@ -62,7 +62,7 @@ export class History extends Component {
         const { selectedIndex, refresh, selectedTransaction, modalVisible } = this.state
         return (
             <View style={{ flex: 1, backgroundColor: '#F8FFFF' }}>
-                <Modal
+                {/* <Modal
                     animationType="slide"
                     transparent={false}
                     visible={modalVisible}
@@ -86,26 +86,15 @@ export class History extends Component {
 
                         </View>
                     </View>
-                </Modal>
+                </Modal> */}
                 <Header
                     containerStyle={styles.header}
                     centerComponent={{ text: "Transactions", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
                 />
-                <View style={{ alignItems: "center" }}>
-                    <ButtonGroup
-                        onPress={(selectedIndex) => this.updateIndex(selectedIndex)}
-                        selectedIndex={selectedIndex}
-                        buttons={buttons}
-                        containerStyle={{ height: 30, backgroundColor: "#F3F3F3", borderRadius: 10, width: width - 50 }}
-                        textStyle={{ color: "#a4a4a4", fontFamily: "Raleway-Regular" }}
-                        selectedButtonStyle={{ backgroundColor: "#A6E7A4" }}
-                    // selectedTextStyle={{ color: "#a4a4a4" }}
-                    />
-                </View>
                 <ScrollView
                     refreshControl={<RefreshControl refreshing={refresh} onRefresh={this.onRefresh} />}
                 >
-                    {this.props.loading ? <Loader /> :
+                    {/*   {this.props.loading ? <Loader /> :
                         this.state.list.map((l, i) => (
                             <ListItem
                                 key={i}
@@ -121,7 +110,8 @@ export class History extends Component {
                                 rightTitleStyle={{ fontFamily: "Raleway-Regular", fontSize: 12, color: l.status == "COMPLETED" ? "#8CC38B" : "#C38B8B" }}
                             />
                         ))
-                    }
+                    }*/}
+
                 </ScrollView>
             </View>
         )

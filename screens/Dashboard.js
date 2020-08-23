@@ -9,299 +9,245 @@ import {
   Dimensions,
   StyleSheet,
   Image,
+  TextInput,
   ScrollView,
 } from "react-native";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import dayjs from "dayjs";
-import { Header, Icon, Card, ListItem } from "react-native-elements";
+import { Header, Icon, Card, ListItem, Badge, } from "react-native-elements";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-import HeaderComponent from "../components/Header";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import { getWalletBalance, getFewTransaction } from "../actions/auth";
 import Loader from "../components/Loader";
+import NumericInput from 'react-native-numeric-input'
+
+import { Root, Toast } from 'native-base';
+
+
+const bgcolors = [
+  "#82D3A3", "#24A6D9", "#595BD9", "#8022D9", "#5FDCD4", "#D85963", "#D88559"
+]
+
+const cardDetails = [
+  {
+    id: 1,
+    name: "Fresh Fish",
+    price: 5000,
+    quantity: 1
+  },
+  {
+    id: 2,
+    name: "Snails",
+    price: 5000.00,
+    quantity: 1
+  },
+  {
+    id: 3,
+    name: "Green Pepper",
+    price: 300.00,
+    quantity: 1
+  },
+  {
+    id: 4,
+    name: "Green Pepper",
+    price: 300.00,
+    quantity: 1
+  }
+]
+
+let cartProducts = [];
 
 export class Dashboard extends Component {
   state = {
     modalVisible: false,
     balance: 0,
     transactions: [],
-  };
-
-  componentDidMount = async () => {
-    const mobile = await AsyncStorage.getItem("mobile");
-    const walletId = await AsyncStorage.getItem("walletId");
-    await this.props.getWalletBalance(mobile);
-    await this.props.getFewTransaction(walletId);
-    if (this.props.data) {
-      console.log("datating", this.props.transactions.data);
-      return this.setState({
-        balance: this.props.data.data.availableBalance,
-        transactions: this.props.transactions.data,
-      });
-    } else {
-      Alert.alert("Ooopps!", this.props.errorMsg.data.message);
-    }
+    addedNumber: 0
   };
 
   setModalVisible = () => {
     this.setState({ modalVisible: !this.state.modalVisible });
   };
 
+  addToCart = async (e, data) => {
+    Toast.show({
+      text: 'Product Added To Cart!',
+      buttonText: 'Okay'
+    })
+    await this.setState({
+      addedNumber: this.state.addedNumber + 1
+    })
+    if (cartProducts.includes(data)) {
+      data.quantity += 1
+      return cartProducts.push(data)
+    }
+    else {
+      return cartProducts.push(data)
+    }
+
+  }
+
   render() {
-    const { modalVisible } = this.state;
+    const { navigation } = this.props
+    const { modalVisible } = this.state
     return (
-      <ScrollView style={{ backgroundColor: "#F8FFFF" }}>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={modalVisible}
-        >
-          <View style={styles.centeredView}>
-            <TouchableOpacity
-              style={{ left: SCREEN_WIDTH - 100 }}
-              onPress={this.setModalVisible}
-            >
-              <AntDesign name="close" size={24} color="black" />
-            </TouchableOpacity>
-
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
+      <Root>
+        <ScrollView style={{ backgroundColor: "#F8FFFF" }}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={modalVisible}
+            style={{ flex: 1 }}
+          >
+            <View style={styles.centeredView}>
               <TouchableOpacity
-                style={styles.button}
-                onPress={async () => {
-                  await AsyncStorage.clear();
-                  await this.props.navigation.navigate("Landing");
-                }}
+                style={{ left: SCREEN_WIDTH - 50 }}
+                onPress={this.setModalVisible}
               >
-                <Text style={styles.textButton}>LOGOUT</Text>
+                <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-        <Header
-          containerStyle={styles.header}
-          leftComponent={<Icon
-            name="user-circle-o"
-            type="font-awesome"
-            color="#E5B275"
-            onPress={() => {
-              this.setModalVisible();
-            }}
-          />}
-          centerComponent={<HeaderComponent balance={this.state.balance} />}
-          rightComponent={<Icon
-            name="bell-o"
-            type="font-awesome"
-            color="#E5B275"
-            onPress={() => {
-              this.setModalVisible();
-            }}
-          />}
-        />
-        <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 10,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#E5B275",
-              padding: 10,
-              borderRadius: 10,
-            }}
-            onPress={this.componentDidMount}
-          >
-            <FontAwesome5 name="sync" color="white" />
-          </TouchableOpacity>
-        </View>
 
-        <Card containerStyle={{ borderRadius: 10, shadowRadius: 25 }}>
-          <Text
-            style={{
-              fontFamily: "Raleway-SemiBold",
-              fontSize: 18,
-              fontStyle: "normal",
-              color: "#000",
-            }}
-          >
-            Quick Actions
-          </Text>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("BookMassage");
-              }}
-            >
-              <Card
-                containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}
-              >
-                <Image
-                  source={require("../assets/icons/footIcon.png")}
-                  style={styles.cardImage}
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <Text style={{
+                  fontFamily: "Raleway-Bold",
+                  marginTop: 10,
+                  textAlign: "left",
+                  color: "#a4a4a4",
+                  fontSize: 18
+                }}>Fill Your Delivery Address</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="What's Your Delivery Address?"
+                  underlineColorAndroid="transparent"
+                  keyboardType="default"
+                  autoCorrect={false}
+                  onChangeText={text => {
+                    this.setState({ fullName: text })
+                  }}
                 />
-                <Text
-                  style={{
-                    fontFamily: "Raleway-Bold",
-                    color: "black",
-                    fontSize: 10,
-                    fontStyle: "normal",
-                    textAlign: "left",
+                {/* <TouchableOpacity
+                  style={[styles.button, { alignSelf: "flex-end" }]}
+                >
+                  <Text style={styles.textButton}>SAVE</Text>
+                </TouchableOpacity> */}
+
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={async () => {
+                    await AsyncStorage.clear();
+                    await this.props.navigation.navigate("Landing");
                   }}
                 >
-                  Book Massage
-                </Text>
-              </Card>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("BookMani");
-              }}
-            >
-              <Card
-                containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}
-              >
-                <Image
-                  source={require("../assets/icons/pediIcon.png")}
-                  style={styles.cardImage}
-                />
-                <Text
-                  style={{
-                    fontFamily: "Raleway-Bold",
-                    color: "black",
-                    fontSize: 10,
-                    fontStyle: "normal",
-                    textAlign: "left",
-                  }}
-                >
-                  Book Mani/Pedi
-                </Text>
-              </Card>
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("BookHairDay");
-              }}
-            >
-              <Card
-                containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}
-              >
-                <Image
-                  source={require("../assets/icons/hairDayicon.png")}
-                  style={styles.cardImage}
-                />
-                <Text
-                  style={{
-                    fontFamily: "Raleway-Bold",
-                    color: "black",
-                    fontSize: 10,
-                    fontStyle: "normal",
-                    textAlign: "left",
-                  }}
-                >
-                  Book Hair-Day
-                </Text>
-              </Card>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("TopUp");
-              }}
-            >
-              <Card
-                containerStyle={{ borderColor: "#E5B275", borderRadius: 10 }}
-              >
-                <Image
-                  source={require("../assets/icons/breadIcon.png")}
-                  style={styles.cardImage}
-                />
-                <Text
-                  style={{
-                    fontFamily: "Raleway-Bold",
-                    color: "black",
-                    fontSize: 10,
-                    fontStyle: "normal",
-                    textAlign: "left",
-                  }}
-                >
-                  Top-Up Account
-                </Text>
-              </Card>
-            </TouchableOpacity>
-          </View>
-        </Card>
-
-        <Card containerStyle={{ borderRadius: 10 }}>
-          <Text
-            style={{
-              fontFamily: "Raleway-SemiBold",
-              fontSize: 18,
-              fontStyle: "normal",
-              color: "#000",
-              lineHeight: 19,
-            }}
-          >
-            Latest Activities
-          </Text>
-          <View>
-            {this.state.transactions.length == 0
-              ? <View
-                style={{ alignItems: "center", justifyContent: "center" }}
-              >
-                {this.props.loading && <Loader />}
-                <Image
-                  source={require("../assets/icons/emptyBox.png")}
-                  style={styles.emptyBox}
-                />
-                <Text
-                  style={{
-                    fontFamily: "Raleway-Regular",
-                    fontSize: 18,
-                    fontStyle: "normal",
-                    color: "#A4A4A4",
-                    textAlign: "center",
-                    marginTop: 10,
-                  }}
-                >
-                  Nothing Yet! Top Up your account and get taken care of!
-                </Text>
+                  <Text style={styles.textButton}>LOGOUT</Text>
+                </TouchableOpacity>
               </View>
-              : this.state.transactions.map((l, i) => (
-                <ListItem
-                  key={i}
-                  // onPress={((e) => this.handleClick(e, l))}
-                  leftAvatar={{
-                    source: require("../assets/icons/transactions.png"),
-                  }}
-                  title={l.description}
-                  titleStyle={{ fontFamily: "Raleway-Bold", color: "#a4a4a4" }}
-                  subtitle={dayjs(l.createdAt).format("dddd, MMMM D")}
-                  subtitleStyle={{
-                    fontFamily: "Raleway-Regular",
-                    color: "#a4a4a4",
-                  }}
-                  bottomDivider
-                  rightTitle={`₦${(l.amount).toFixed(2)}`}
-                  rightTitleStyle={{
-                    fontFamily: "Raleway-Bold",
-                    fontSize: 14,
-                    color: l.status == "COMPLETED" ? "#8CC38B" : "#C38B8B",
-                  }}
+            </View>
+          </Modal>
+
+          <Header
+            containerStyle={styles.header}
+            leftComponent={
+              <TouchableOpacity
+                onPress={
+                  this.setModalVisible}>
+                <Image
+                  source={require("../assets/icons/avatarIcon.png")}
+                  style={{ width: 40, height: 40 }}
+
                 />
-              ))}
+              </TouchableOpacity>
+            }
+            centerComponent={{ text: "Products", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
+            rightComponent={
+              <TouchableOpacity style onPress={() => navigation.navigate("Cart", {
+                cartProducts: [...new Set(cartProducts)]
+              })}>
+                <Image
+                  source={require("../assets/icons/cartIcon.png")}
+                  style={{ width: 40, height: 40 }}
+
+                />
+                <Badge
+                  value={this.state.addedNumber}
+                  status="success"
+                  containerStyle={{ position: 'absolute', top: -1, right: -1 }}
+                />
+              </TouchableOpacity>
+            }
+          />
+
+          <View
+            style={{
+              marginTop: 15,
+              flexWrap: "wrap",
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+            }}
+          >
+            {
+              cardDetails.length > 0 ?
+                cardDetails.map((item, i) => (
+
+                  <Card key={i}
+                    containerStyle={{
+                      backgroundColor: bgcolors[Math.floor(Math.random() * bgcolors.length)],
+                      borderColor: "transparent",
+                      borderRadius: 15,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: SCREEN_HEIGHT / 3.5,
+                      width: SCREEN_WIDTH / 2.5,
+                      shadowColor: 'rgba(0, 0, 0, 0.14)',
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.8,
+                      shadowRadius: 2,
+
+
+                    }}
+                  >
+                    <Image
+                      source={require("../assets/farmerImage.png")}
+                      style={styles.productImage}
+                    />
+                    <Text
+                      style={{
+                        fontFamily: "Raleway-Bold",
+                        color: "#fff",
+                        fontSize: 13,
+                        textAlign: "center",
+                        marginTop: 5
+                      }}
+                    >
+                      {item.name}
+                    </Text>
+                    <View style={{ alignItems: "stretch", justifyContent: "space-between", marginTop: 10 }}>
+                      <Text style={styles.priceSubtitle}>
+                        ₦{item.price.toFixed(2).toLocaleString()}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={(e) => {
+                          // e.preventDefault()
+                          this.addToCart(e, item)
+                        }}
+                      >
+                        <AntDesign
+                          style={{ alignSelf: "center", marginTop: 5 }}
+                          name="pluscircle"
+                          color="#fff" size={26} />
+                      </TouchableOpacity>
+                    </View>
+                  </Card>
+
+                ))
+                :
+                null
+            }
+
           </View>
-        </Card>
-      </ScrollView>
+        </ScrollView >
+      </Root>
     );
   }
 }
@@ -330,15 +276,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     borderBottomColor: "#F8FFFF",
   },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 10,
-    marginTop: 20,
+  priceSubtitle: {
+    fontFamily: "Raleway-Bold",
+    color: "#fff",
+    fontSize: 18,
+    textAlign: "center",
+  },
+  input: {
     width: SCREEN_WIDTH - 50,
-    borderRadius: 10,
-    paddingTop: 15,
-    paddingBottom: 15,
+    marginTop: 10,
+    padding: 20,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 15,
+    color: 'black',
+    alignItems: "center"
   },
   image: {
     flex: 1,
@@ -347,6 +298,18 @@ const styles = StyleSheet.create({
   cardImage: {
     width: 20,
     height: 20,
+    shadowColor: 'rgba(0, 0, 0, 0.14)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+  },
+  productImage: {
+    borderRadius: 10,
+    width: SCREEN_WIDTH / 4,
+    height: SCREEN_HEIGHT / 9,
+    alignSelf: "center",
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 1,
   },
   emptyBox: {
     width: 150,
@@ -354,9 +317,29 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   textButton: {
-    color: "#000",
+    color: "#fff",
+    padding: 10
   },
   centeredView: {
-    marginTop: 100,
+    marginTop: 50,
   },
+  button: {
+    backgroundColor: "#82D3A3",
+    marginTop: 10,
+    borderRadius: 5,
+    padding: 7,
+    alignItems: "center",
+    // width: width - 100
+  },
+  logoutButton: {
+    // alignItems: "center",
+    backgroundColor: "#0FBA0C",
+    padding: 10,
+    width: SCREEN_WIDTH - 50,
+    borderRadius: 10,
+    paddingTop: 15,
+    paddingBottom: 15,
+    position: "absolute",
+    bottom: 100
+  }
 });

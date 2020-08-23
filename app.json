@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "therapyboxng",
-    "slug": "therapyboxng",
+    "name": "OmodunFarms",
+    "slug": "OmodunFarms",
     "platforms": [
       "ios",
       "android",
@@ -11,7 +11,7 @@
     "orientation": "portrait",
     "icon": "./assets/tbIcon.png",
     "splash": {
-      "image": "./assets/splashScreen.png",
+      "image": "./assets/omodunSplash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },

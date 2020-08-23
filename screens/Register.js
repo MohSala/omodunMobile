@@ -1,43 +1,120 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Dimensions, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
-import { Header, Icon } from "react-native-elements";
-import Loader from "../components/Loader";
+import { View, Dimensions, StyleSheet, Alert, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 import { connect } from "react-redux";
 import { createAccount } from "../actions/auth";
-import NetInfo from "@react-native-community/netinfo";
 
-const width = Dimensions.get("window").width
+const { width, height } = Dimensions.get("window")
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        width,
+        backgroundColor: "#F4FFFE"
+    },
+    slider: {
+        height: height * 0.49,
+        borderBottomEndRadius: 50,
+        backgroundColor: "#BFEAF5"
+    },
+    footer: {
+        flex: 1,
+    },
+    footerContent: {
+        flex: 1,
+        backgroundColor: "white",
+        borderTopLeftRadius: 80
+    },
+    footerContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 24
+
+    },
+    title: {
+        fontSize: 80,
+        fontFamily: "Raleway-Bold",
+        color: "white",
+        textAlign: "center",
+        lineHeight: 80
+    },
+    titleContainer: {
+        // backgroundColor: "red",
+        height: 100,
+        justifyContent: "center",
+    },
+    underlay: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: "flex-end",
+    },
+    picture: {
+        ...StyleSheet.absoluteFillObject,
+        width: undefined,
+        height: undefined
+    },
+    subtitle: {
+        fontFamily: "Raleway-Regular",
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 12,
+        color: "#A9A9A9",
+        textAlign: "center"
+    },
+    description: {
+        fontFamily: "Raleway-SemiBold",
+        fontSize: 16,
+        color: "#A9a9a9",
+        textAlign: "center",
+        lineHeight: 25,
+        fontWeight: "bold",
+        marginTop: 10,
+        marginBottom: 40
+    },
+    button: {
+        backgroundColor: "#82D3A3",
+        borderRadius: 15,
+        padding: 15,
+        alignItems: "center",
+        width: width - 50
+    },
+
+    input: {
+        width: width - 100,
+        padding: 20,
+        backgroundColor: '#F5F5F5',
+        borderRadius: 15,
+        color: 'black',
+        marginBottom: 10
+    },
+    signUpText: {
+        color: "#82D3A3",
+    }
+
+})
+
 export class Register extends Component {
 
     state = {
+        fullName: "",
+        email: "",
         password: "",
-        confirmPassword: "",
-        warning: true
+        mobile: ""
     }
 
     handleSubmit = async () => {
-        NetInfo.fetch().then(state => {
-            if (state.isConnected) {
-                console.log("Network connected")
-            }
-            else {
-                Alert.alert("Ooopss", "Looks like you are offline");
-            }
-        });
-        const { password, confirmPassword } = this.state;
-        if (password !== confirmPassword) {
-            Alert.alert("Ooops!", "Passwords do not match")
+        const { fullName, email, mobile, password } = this.state;
+        if (!fullName || !email || !mobile || !password) {
+            Alert.alert("Ooops!", "Please Fill in All Required Fields")
         }
         else {
             const { navigation } = this.props;
-            let mobile = navigation.getParam('mobile', 'none');
-            await this.props.createAccount({ mobile, password })
+            await this.props.createAccount({ fullName, email, mobile, password })
             if (this.props.error) {
                 Alert.alert("Oooppss!", this.props.errorMsg.data.message)
             }
             else {
-                await navigation.navigate("AddEmail", {
-                    mobile: mobile
+                await navigation.navigate("OTPValidation", {
+                    mobile
                 });
             }
         }
@@ -45,52 +122,82 @@ export class Register extends Component {
     };
 
     render() {
+        const transform = [
+            { translateY: (height - 300) / 3 },
+            { translateX: width / 2 - 50 },
+            { rotate: "90deg" }
+        ]
+        const { navigation } = this.props;
         return (
-            <View style={{ flex: 1, backgroundColor: '#F8FFFF' }}>
-                <Header
-                    containerStyle={styles.header}
-                    leftComponent={
-                        <Icon
-                            name='angle-left'
-                            type='font-awesome'
-                            onPress={() => this.props.navigation.navigate("OTPValidation")}
-                        />}
-                    centerComponent={{ text: "Create Password", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
-                />
+            <ScrollView
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
+                style={styles.container}>
+                <View style={styles.slider}>
+                    {/* <Image source={picture} style={styles.picture} /> */}
+                    <View style={[styles.titleContainer, { transform }]}>
+                        <Text style={{
+                            fontSize: 65,
+                            fontFamily: "Raleway-Bold",
+                            color: "white",
+                            textAlign: "center",
+                            lineHeight: 80,
+                        }}>REGISTER</Text>
+                    </View>
+                </View>
 
-                <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", width: width - 50, fontSize: 16, textAlign: "center", marginTop: 15 }}>
-                        Create a password for your TherapyBox account.
-                     </Text>
-
+                <View style={styles.footerContainer}>
                     <TextInput
-                        placeholder="Password"
+                        style={styles.input}
+                        placeholder="What's Your Name?"
+                        underlineColorAndroid="transparent"
                         keyboardType="default"
+                        autoCorrect={false}
+                        onChangeText={text => {
+                            this.setState({ fullName: text })
+                        }}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email Address"
+                        underlineColorAndroid="transparent"
+                        keyboardType="email-address"
+                        autoCorrect={false}
+                        onChangeText={text => {
+                            this.setState({ email: text })
+                        }}
+
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Phone Number"
+                        underlineColorAndroid="transparent"
+                        keyboardType="numeric"
+                        onChangeText={text => {
+                            this.setState({ mobile: text })
+                        }}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        underlineColorAndroid="transparent"
                         secureTextEntry
-                        placeholderTextColor="#a4a4a4"
                         onChangeText={text => {
                             this.setState({ password: text })
                         }}
-                        style={{ height: 50, width: width - 50, marginTop: 50, borderBottomColor: '#a4a4a4', color: "#a4a4a4", borderBottomWidth: 1, fontFamily: "Raleway-Regular", fontSize: 15 }} />
-                    {this.state.warning && <Text style={{ color: "#a4a4a4" }}>Password should be at least 8 characters</Text>}
-                    <TextInput
-                        placeholder="Confirm Password"
-                        keyboardType="default"
-                        secureTextEntry
-                        placeholderTextColor="#a4a4a4"
-                        onChangeText={text => {
-                            this.setState({ confirmPassword: text })
-                        }}
-                        style={{ height: 50, width: width - 50, marginTop: 50, borderBottomColor: '#a4a4a4', color: "#a4a4a4", borderBottomWidth: 1, fontFamily: "Raleway-Regular", fontSize: 15 }} />
-
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={this.handleSubmit}
-                    >
-                        {!this.props.loading ? <Text style={styles.textButton}>Continue</Text> : <ActivityIndicator size="small" color="#fff" />}
+                    />
+                    <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+                        {!this.props.loading ?
+                            <Text style={{
+                                color: "white",
+                                fontWeight: "bold",
+                                fontSize: 18
+                            }}>GET STARTED</Text> :
+                            <ActivityIndicator size="small" color="#fff" />}
                     </TouchableOpacity>
+                    <Text style={styles.description}>Already have an account?<Text style={styles.signUpText} onPress={() => navigation.navigate("Login")}>Sign In</Text></Text>
                 </View>
-            </View>
+
+            </ScrollView>
         )
     }
 }
@@ -101,6 +208,7 @@ const mapDispatchToProps = dispatch => ({
 
 const mapStateToProps = state => ({
     loading: state.auth.loading,
+    created: state.auth.created,
     data: state.auth.data,
     error: state.auth.error,
     errorMsg: state.auth.errorMsg
@@ -111,25 +219,3 @@ export default connect(
     mapDispatchToProps
 )(Register);
 
-const styles = StyleSheet.create({
-    header: {
-        backgroundColor: '#F8FFFF',
-        justifyContent: 'space-around',
-        borderBottomColor: '#F8FFFF',
-    },
-    button: {
-        alignItems: "center",
-        backgroundColor: "#E5B275",
-        padding: 10,
-        marginTop: 60,
-        width: width - 50,
-        borderRadius: 10,
-        paddingTop: 15,
-        paddingBottom: 15
-    },
-    textButton: {
-        color: "white",
-        fontFamily: "Raleway-Bold",
-        fontSize: 18
-    }
-})

@@ -16,23 +16,13 @@ export class OTPValidation extends Component {
     handleSubmit = async () => {
         const { navigation } = this.props;
         const mobile = navigation.getParam('mobile', 'none');
-        NetInfo.fetch().then(state => {
-            if (state.isConnected) {
-                console.log("Network connected")
-            }
-            else {
-                Alert.alert("Ooopss", "Looks like you are offline");
-            }
-        });
         const { otp } = this.state;
         await this.props.verifyUserOtp({ otp, mobile });
         if (this.props.error) {
             Alert.alert("Ooopps!", this.props.errorMsg.data.message)
         }
         else {
-            await navigation.navigate("Register", {
-                mobile: mobile
-            })
+            await navigation.navigate("Dashboard")
         }
     }
 
@@ -59,12 +49,12 @@ export class OTPValidation extends Component {
                 <View style={{ alignItems: "center" }}>
                     <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", width: width - 50, fontSize: 16, textAlign: "center", marginTop: 15 }}>
                         Enter the 5 digit authentication code
-    sent to <Text style={{ fontFamily: "Raleway-SemiBold", color: "#E5B275" }}>{mobile}</Text> via sms
+    sent to <Text style={{ fontFamily: "Raleway-SemiBold", color: "#82D3A3" }}>{mobile}</Text> via sms
                     </Text>
 
                     <TextInput
                         placeholder="OTP"
-                        keyboardType="default"
+                        keyboardType="numeric"
                         placeholderTextColor="#a4a4a4"
                         onChangeText={text => {
                             this.setState({ otp: text })
@@ -79,7 +69,7 @@ export class OTPValidation extends Component {
                     >
                         <Text style={styles.textButton}>Continue</Text>
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", fontSize: 16, textAlign: "center", marginTop: 15 }}>Didn’t get code? <Text onPress={this.tapHere} style={{ fontFamily: "Raleway-SemiBold", color: "#E5B275" }}>Tap Here</Text></Text>
+                    <Text style={{ fontFamily: "Raleway-SemiBold", color: "#a4a4a4", fontSize: 16, textAlign: "center", marginTop: 15 }}>Didn’t get code? <Text onPress={this.tapHere} style={{ fontFamily: "Raleway-SemiBold", color: "#82D3A3" }}>Tap Here</Text></Text>
                 </View>
             </View>
         )
@@ -110,7 +100,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: "center",
-        backgroundColor: "#E5B275",
+        backgroundColor: "#82D3A3",
         padding: 10,
         width: width / 2,
         borderRadius: 10,

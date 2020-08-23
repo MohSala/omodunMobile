@@ -233,14 +233,15 @@ const createAccount = data => {
         dispatch(createAccountRequest());
         try {
             const response = await axios.post(
-                `${BASE_URL}/validatePassword`,
+                `${BASE_URL}/createMerchant`,
                 data
             );
             const token = `Bearer ${response.data.data.token}`;
             const user = response.data.data;
             // save token and user details to local storage
             await AsyncStorage.setItem("token", token);
-            await AsyncStorage.setItem("mobile", user.savePwd.mobile)
+            await AsyncStorage.setItem("mobile", user.user.mobile)
+            await AsyncStorage.setItem("email", user.user.email)
             return dispatch(createAccountFulfilled(response));
         } catch (e) {
             console.log(e);

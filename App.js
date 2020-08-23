@@ -26,6 +26,7 @@ export default class App extends React.Component {
       );
     } else {
       return (
+
         <Provider store={store}>
           {Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}
           <AppNavigator />

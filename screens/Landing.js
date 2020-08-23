@@ -1,163 +1,84 @@
-import React, { Component } from 'react'
-import { AsyncStorage, Text, View, StyleSheet, Image, Dimensions, TextInput, TouchableOpacity, Platform, Alert, ActivityIndicator } from 'react-native'
-import { Header } from 'react-native-elements';
-import { connect } from "react-redux";
-import { checkForUser } from "../actions/auth";
-import NetInfo from "@react-native-community/netinfo";
+import React, { useEffect } from 'react'
+import { StyleSheet, Text, View, Image, Dimensions, AsyncStorage, TouchableOpacity } from 'react-native'
 
+const { width, height } = Dimensions.get("window")
 
-const width = Dimensions.get("window").width
-export class Landing extends Component {
-
-    state = {
-        mobile: "",
-        errorMsg: "",
-        error: false
-    }
-
-    componentDidMount = async () => {
-        const token = await AsyncStorage.getItem("token");
-        const mobile = await AsyncStorage.getItem("mobile");
-        if (token) {
-            await this.props.navigation.navigate("Login", {
-                mobile: mobile
-            });
-        }
-    }
-
-    handleSubmit = async () => {
-        NetInfo.fetch().then(state => {
-            if (state.isConnected) {
-                console.log("Network connected")
+const Onboarding = ({ navigation }) => {
+    useEffect(() => {
+        async function fetData() {
+            const token = await AsyncStorage.getItem("token");
+            const mobile = await AsyncStorage.getItem("mobile");
+            if (token) {
+                await navigation.navigate("Login", {
+                    mobile: mobile
+                });
             }
-            else {
-                Alert.alert("Ooopss", "Looks like you are offline");
-            }
-        });
-        const { mobile } = this.state;
-        await this.props.checkForUser({ mobile });
-
-        if (this.props.error) {
-            this.setState({
-                error: true,
-                errorMsg: this.props.errorMsg.data.message
-            })
-
         }
-        else if (this.props.data.code === 201) {
-            await this.props.navigation.navigate("OTPValidation", {
-                mobile: this.state.mobile
-            });
-        }
-        else if (this.props.data.code === 200) {
-            await this.props.navigation.navigate("Login", {
-                mobile: this.state.mobile
-            });
-        }
-    };
-
-
-    render() {
-        return (
-            <View style={{ flex: 1, backgroundColor: '#F8FFFF' }}>
-                <Header
-                    containerStyle={styles.header}
-                    centerComponent={{ text: 'TherapyBox', style: { color: '#e1e1e1', fontSize: 16, fontFamily: "Raleway-Bold" } }}
-                />
-                <View style={{ alignItems: "center" }}>
-                    <Image source={require("../assets/boxImage.png")} style={styles.image} />
-                    <Text style={{ fontFamily: "Raleway-SemiBold", fontSize: 18, marginTop: 30, fontStyle: "normal", fontWeight: "600", color: "#a4a4a4" }}>Hey Friend,</Text>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", fontSize: 18, marginTop: 12, fontStyle: "normal", fontWeight: "600", color: "#a4a4a4", lineHeight: 19 }}>In a few steps,</Text>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", fontSize: 18, marginTop: 5, fontStyle: "normal", fontWeight: "600", color: "#a4a4a4", lineHeight: 19 }}>you can have your therapy brought</Text>
-                    <Text style={{ fontFamily: "Raleway-SemiBold", fontSize: 18, marginTop: 5, fontStyle: "normal", fontWeight: "600", color: "#a4a4a4", lineHeight: 19 }}>right to you.</Text>
-                </View>
-
-                <View style={{ flex: 1, flexDirection: "row", marginTop: 20 }}>
-                    <View style={{ width: width / 2, height: 60, alignItems: "center" }}>
-                        <Text style={{ position: "absolute", fontFamily: "Raleway-SemiBold", marginLeft: 10, marginTop: 15, fontStyle: "normal", color: "#a4a4a4" }}>Country</Text>
-                        <Image source={require("../assets/naijaFlag.png")} style={styles.naijaImage} />
-                    </View>
-                    <View style={{ width: width / 2.5, height: 60 }}>
-                        <TextInput
-                            placeholder="Phone Number"
-                            keyboardType="phone-pad"
-                            returnKeyType="done"
-                            placeholderTextColor="#a4a4a4"
-                            onChangeText={text => {
-                                this.setState({ mobile: text })
-                            }}
-                            style={{ height: 40, borderBottomColor: '#a4a4a4', color: "#a4a4a4", borderBottomWidth: 1, marginTop: 20, marginRight: 10, fontFamily: "Raleway-Regular" }} />
-                    </View>
-
-                </View>
-
-                <View style={{ flex: 1.6, alignItems: "center" }}>
-                    <TouchableOpacity
-                        disabled={this.state.mobile.length != 11}
-                        style={styles.button}
-                        onPress={this.handleSubmit}
-                    >
-                        {!this.props.loading ? <Text style={styles.textButton}>Continue</Text> : <ActivityIndicator size="small" color="#fff" />}
-
-                    </TouchableOpacity>
-                </View>
+        fetData();
+    }, [])
+    return (
+        <View style={styles.container}>
+            <View style={styles.imageContainer}>
+                <Image source={require("../assets/farmerImage.png")} style={styles.headerImage} />
             </View>
-        )
-    }
+            <View style={styles.bottomContainer}>
+                <Text style={styles.subtitle}>Let's Farm Fresh Together!</Text>
+                <Text style={styles.description}>
+                    Omodun Farms has the best farm freshed produce you can find in the market, ranging from vegetables to fruits and livestock!
+                </Text>
+                <TouchableOpacity style={styles.button} onPress={() => {
+                    navigation.navigate("Register")
+                }}>
+                    <Text style={{ color: "white", fontWeight: "bold", fontSize: 18, fontFamily: "Raleway-Bold" }}>GET STARTED</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
 }
 
-const mapDispatchToProps = dispatch => ({
-    checkForUser: data => dispatch(checkForUser(data))
-});
-
-const mapStateToProps = state => ({
-    loading: state.auth.loading,
-    data: state.auth.data,
-    isAuthenticated: state.auth.isAuthenticated,
-    error: state.auth.error,
-    errorMsg: state.auth.errorMsg
-});
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Landing);
+export default Onboarding
 
 const styles = StyleSheet.create({
-    // container: {
-
-    // },
-    header: {
-        backgroundColor: '#F8FFFF',
-        justifyContent: 'space-around',
-        borderBottomColor: '#F8FFFF',
-    },
-    image: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 100,
-        height: 110,
-        opacity: 0.1
-    },
-    naijaImage: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 40,
-        width: 30,
-        height: 20
+    container: {
+        flex: 1,
+        backgroundColor: "#F4FFFE"
     },
     button: {
+        backgroundColor: "#82D3A3",
+        borderRadius: 15,
+        padding: 15,
         alignItems: "center",
-        backgroundColor: "#E5B275",
-        padding: 10,
-        width: width - 50,
-        borderRadius: 10,
-        paddingTop: 15,
-        paddingBottom: 15
+        width: width - 100,
+        marginBottom: 80
     },
-    textButton: {
-        color: "white",
-        fontFamily: "Raleway-Bold",
-        fontSize: 18
+    imageContainer: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: "flex-start",
+    },
+    headerImage: {
+        height: height / 2
+    },
+    bottomContainer: {
+        flex: 1,
+        justifyContent: "flex-end",
+        alignItems: "center",
+    },
+    subtitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+        textDecorationLine: "underline",
+        color: "#A9A9A9",
+        textAlign: "center",
+        fontFamily: "Raleway-Bold"
+    },
+    description: {
+        color: "#A9A9A9",
+        marginBottom: 40,
+        textAlign: "center",
+        fontSize: 20,
+        fontWeight: "500",
+        lineHeight: 25,
+        padding: 20,
+        fontFamily: "Raleway-SemiBold"
     }
 })
