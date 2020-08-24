@@ -10,31 +10,22 @@ import {
     ScrollView,
     TouchableOpacity
 } from "react-native";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+
 import { Header, Icon, Card, ListItem, Badge, Divider } from "react-native-elements";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-const list = [
-    {
-        name: 'Amy Farha',
-        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: '$5,000.00',
-        quantity: 4
-    },
-    {
-        name: 'Chris Jackson',
-        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-        subtitle: '$5,000.00',
-        quantity: 2
-    },
-
-]
 
 export class Cart extends Component {
 
     state = {
         cartProducts: [],
+        modalVisible: false,
         totalPrice: 0
     }
+
+    setModalVisible = () => {
+        this.setState({ modalVisible: !this.state.modalVisible });
+    };
 
     componentDidMount = async () => {
         const cartProducts = this.props.navigation.getParam('cartProducts', 'none');
@@ -57,7 +48,7 @@ export class Cart extends Component {
 
 
     render() {
-        const { cartProducts } = this.state
+        const { modalVisible, cartProducts } = this.state
         return (
             <ScrollView style={{ backgroundColor: "#F8FFFF" }}>
                 <Header
@@ -80,6 +71,95 @@ export class Cart extends Component {
                         </TouchableOpacity>
                     }
                 />
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={modalVisible}
+                    style={{ flex: 1 }}
+                >
+                    <Header
+                        containerStyle={styles.header}
+                        centerComponent={{ text: "Confirm", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
+                        rightComponent={
+                            <TouchableOpacity
+                                onPress={this.setModalVisible}
+                            >
+                                <AntDesign name="close" size={24} color="black" />
+                            </TouchableOpacity>
+                        }
+                    />
+                    <View style={styles.centeredView}>
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                            <Text style={{
+                                fontFamily: "Raleway-SemiBold",
+                                color: "#000",
+                                padding: 10,
+                                fontSize: 26
+                            }}>
+                                Product Price:
+                    </Text>
+                            <Text style={{
+                                fontFamily: "Raleway-Bold",
+                                color: "#000",
+                                fontSize: 30,
+                                padding: 10,
+                                textDecorationLine: "underline"
+                            }}>
+                                {`₦${this.sumTotal(cartProducts).toLocaleString()}.00`}
+                            </Text>
+                            <Text style={{
+                                fontFamily: "Raleway-SemiBold",
+                                color: "#000",
+                                padding: 10,
+                                fontSize: 26
+                            }}>
+                                Delivery Fee:
+                    </Text>
+                            <Text style={{
+                                fontFamily: "Raleway-Bold",
+                                color: "#000",
+                                fontSize: 30,
+                                padding: 10,
+                                textDecorationLine: "underline"
+                            }}>
+                                ₦1,000
+                    </Text>
+                        </View>
+
+                        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                            <TouchableOpacity style={[styles.button, { width: SCREEN_WIDTH / 3, backgroundColor: "#CE5454" }]} onPress={this.setModalVisible}>
+                                <Text style={{ color: "white", fontSize: 18, fontFamily: "Raleway-Bold" }}>CANCEL</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, { width: SCREEN_WIDTH / 3 }]}
+                                onPress={() => {
+                                    this.setModalVisible()
+                                    this.props.navigation.navigate("PaymentSuccess")
+                                }}>
+                                <Text style={{ color: "white", fontSize: 18, fontFamily: "Raleway-Bold" }}>PAY</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View>
+                            <Text style={{
+                                fontFamily: "Raleway-Bold",
+                                marginTop: 20,
+                                textAlign: "left",
+                                color: "#a4a4a4",
+                                fontSize: 18,
+                                padding: 20
+                            }}>Current Home Address:</Text>
+                            <Text style={{
+                                fontFamily: "Raleway-SemiBold",
+                                textAlign: "center",
+                                color: "#a4a4a4",
+                                fontSize: 18,
+                            }}>Road #house J1, Victoria Garden city</Text>
+                        </View>
+
+                    </View>
+
+                </Modal>
                 <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "flex-start", padding: 30 }}>
                     <Text style={{ fontFamily: "Raleway-Bold", fontSize: 25 }}>My</Text>
                     <Text style={{ fontFamily: "Raleway-Regular", fontSize: 25 }}>Order</Text>
@@ -116,8 +196,8 @@ export class Cart extends Component {
                 </View>
 
                 <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center", position: "relative", bottom: 0 }}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Dashboard")}>
-                        <Text style={{ color: "white", fontSize: 18, fontFamily: "Raleway-Bold" }}>PAY</Text>
+                    <TouchableOpacity style={styles.button} onPress={this.setModalVisible}>
+                        <Text style={{ color: "white", fontSize: 18, fontFamily: "Raleway-Bold" }}>CONFIRM</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -148,5 +228,8 @@ const styles = StyleSheet.create({
         color: "white",
         fontFamily: "Raleway-Bold",
         fontSize: 18
-    }
+    },
+    centeredView: {
+        marginTop: 50,
+    },
 })

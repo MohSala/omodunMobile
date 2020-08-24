@@ -7,12 +7,15 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { HistoryScreen } from "./index";
 import Dashboard from "../screens/Dashboard"
 import Cart from "../screens/Cart"
-
+import SetDeliveryAddress from "../screens/SetDeliveryAddress"
+import PaymentSuccess from "../screens/PaymentSuccess"
 
 const HomeStack = createStackNavigator(
     {
         Dashboard,
-        Cart
+        Cart,
+        SetDeliveryAddress,
+        PaymentSuccess
     },
     {
         defaultNavigationOptions: {

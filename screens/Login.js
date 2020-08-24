@@ -1,5 +1,14 @@
 import React, { Component } from 'react'
-import { View, Dimensions, StyleSheet, Alert, Text, TextInput, TouchableOpacity, AsyncStorage } from 'react-native'
+import {
+    View,
+    Dimensions,
+    StyleSheet,
+    Alert,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    AsyncStorage
+} from 'react-native'
 import Loader from "../components/Loader";
 import { connect } from "react-redux";
 import { loginWithNumber } from "../actions/auth";
@@ -53,7 +62,7 @@ const styles = StyleSheet.create({
         height: undefined
     },
     subtitle: {
-        fontFamily: "Raleway-Regular",
+        fontFamily: "Raleway-Bold",
         fontSize: 24,
         fontWeight: "bold",
         marginBottom: 12,
@@ -102,14 +111,6 @@ export class Login extends Component {
         storedMobile: ""
     }
 
-    componentDidMount = async () => {
-        const storedMobile = await AsyncStorage.getItem("mobile");
-        return this.setState({
-            storedMobile,
-            mobile: storedMobile
-        })
-    }
-
     handlesubmit = async () => {
         const { mobile, password } = this.state;
         const { loginWithNumber, navigation } = this.props;
@@ -153,7 +154,7 @@ export class Login extends Component {
                         placeholder="Phone Number"
                         keyboardType="number-pad"
                         returnKeyType="done"
-                        value={storedMobile !== null ? mobile : ""}
+
 
                         underlineColorAndroid="transparent"
                         onChangeText={text => {

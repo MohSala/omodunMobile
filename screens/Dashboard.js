@@ -63,8 +63,18 @@ export class Dashboard extends Component {
     modalVisible: false,
     balance: 0,
     transactions: [],
-    addedNumber: 0
+    addedNumber: 0,
+    email: "",
+    mobile: ""
   };
+
+  componentDidMount = async () => {
+    const mobile = await AsyncStorage.getItem("mobile")
+    const email = await AsyncStorage.getItem("email")
+    return this.setState({
+      email, mobile
+    })
+  }
 
   setModalVisible = () => {
     this.setState({ modalVisible: !this.state.modalVisible });
@@ -90,7 +100,7 @@ export class Dashboard extends Component {
 
   render() {
     const { navigation } = this.props
-    const { modalVisible } = this.state
+    const { modalVisible, mobile, email } = this.state
     return (
       <Root>
         <ScrollView style={{ backgroundColor: "#F8FFFF" }}>
@@ -108,7 +118,7 @@ export class Dashboard extends Component {
                 <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>
 
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
+              {/* <View style={{ alignItems: "center", justifyContent: "center" }}>
                 <Text style={{
                   fontFamily: "Raleway-Bold",
                   marginTop: 10,
@@ -126,12 +136,6 @@ export class Dashboard extends Component {
                     this.setState({ fullName: text })
                   }}
                 />
-                {/* <TouchableOpacity
-                  style={[styles.button, { alignSelf: "flex-end" }]}
-                >
-                  <Text style={styles.textButton}>SAVE</Text>
-                </TouchableOpacity> */}
-
                 <TouchableOpacity
                   style={styles.button}
                   onPress={async () => {
@@ -141,7 +145,48 @@ export class Dashboard extends Component {
                 >
                   <Text style={styles.textButton}>LOGOUT</Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
+              <Card containerStyle={{ borderRadius: 10, shadowRadius: 5, marginBottom: 10 }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                  <Image source={require("../assets/icons/avatarIcon.png")} />
+                  <View>
+                    <Text style={{ fontFamily: "Raleway-Regular", color: "#a4a4a4", fontSize: 18 }}>
+                      {mobile}
+                    </Text>
+                    <Text style={{ fontFamily: "Raleway-Bold", color: "#a4a4a4", fontSize: 18 }}>
+                      {email}
+                    </Text>
+                  </View>
+                </View>
+              </Card>
+              <ListItem
+                title="Set Delivery Address"
+                titleStyle={{ color: "#a4a4a4", fontFamily: "Raleway-SemiBold" }}
+                leftAvatar={{
+                  source: require("../assets/icons/crossRoad.png"),
+                  title: "Avatar"
+                }}
+                chevron
+                onPress={
+                  () => {
+                    this.props.navigation.navigate("SetDeliveryAddress")
+                    this.setModalVisible()
+                  }
+                }
+              />
+              <ListItem
+                title="Logout"
+                titleStyle={{ color: "#a4a4a4", fontFamily: "Raleway-SemiBold" }}
+                leftAvatar={{
+                  source: require("../assets/icons/closeEye.png"),
+                  title: "Avatar"
+                }}
+                chevron
+                onPress={async () => {
+                  await AsyncStorage.clear();
+                  await this.props.navigation.navigate("Login");
+                }}
+              />
             </View>
           </Modal>
 

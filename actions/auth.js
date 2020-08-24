@@ -12,7 +12,8 @@ import {
     CREDIT_TRANSACTION_ACTION_TYPES,
     GET_TRANSACTION_ACTION_TYPES,
     GET_FEW_TRANSACTION_ACTION_TYPES,
-    REGISTER_A_TASK_ACTION_TYPES
+    REGISTER_A_TASK_ACTION_TYPES,
+    ADD_ADDRESS_ACTION_TYPES
 } from "./actionTypes";
 
 
@@ -21,6 +22,12 @@ const {
     LOGIN_WITH_PHONE_REJECTED,
     LOGIN_WITH_PHONE_REQUEST
 } = LOGIN_WITH_PHONE_ACTION_TYPES;
+
+const {
+    ADD_ADDRESS_FULFILLED,
+    ADD_ADDRESS_REJECTED,
+    ADD_ADDRESS_REQUEST
+} = ADD_ADDRESS_ACTION_TYPES;
 
 const {
     REGISTER_A_TASK_FULFILLED,
@@ -196,6 +203,7 @@ const loginWithNumber = data => {
             );
             const token = `Bearer ${response.data.data.token}`;
             const user = response.data.data;
+
             // save token and user details to local storage
             const email = user.user.email
             // save token and user details to local storage
@@ -269,6 +277,23 @@ const addEmail = data => {
         }
     };
 };
+
+const addDeliveryAddress = data => {
+    return async (dispatch) => {
+        dispatch(addAddressRequest());
+        try {
+            const response = await axios.post(
+                `${BASE_URL}/deliveryAddress`,
+                data
+            );
+            const { message } = response.data;
+            return dispatch(addAddressFulfilled(message));
+        } catch (error) {
+            console.log(error);
+            dispatch(addAddressRejected(error));
+        }
+    }
+}
 
 const forgotPassword = data => {
     return async (dispatch) => {
@@ -444,6 +469,20 @@ const addEmailRejected = (data) => ({
     payload: data
 });
 
+const addAddressRequest = () => ({
+    type: ADD_ADDRESS_REQUEST
+});
+
+const addAddressFulfilled = data => ({
+    type: ADD_ADDRESS_FULFILLED,
+    payload: data
+});
+
+const addAddressRejected = (data) => ({
+    type: ADD_ADDRESS_REJECTED,
+    payload: data
+});
+
 
 
 export {
@@ -457,5 +496,6 @@ export {
     creditTransaction,
     getMyTransaction,
     getFewTransaction,
-    registerTask
+    registerTask,
+    addDeliveryAddress
 }

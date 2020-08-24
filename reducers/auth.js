@@ -1,6 +1,5 @@
 import {
     LOGIN_WITH_PHONE_ACTION_TYPES,
-    // FORGOT_PASSWORD_ACTION_TYPES,
     CREATE_ACCOUNT_ACTION_TYPES,
     CHECK_ACCOUNT_ACTION_TYPES,
     VERIFY_USER_ACTION_TYPES,
@@ -9,7 +8,8 @@ import {
     CREDIT_TRANSACTION_ACTION_TYPES,
     GET_TRANSACTION_ACTION_TYPES,
     GET_FEW_TRANSACTION_ACTION_TYPES,
-    REGISTER_A_TASK_ACTION_TYPES
+    REGISTER_A_TASK_ACTION_TYPES,
+    ADD_ADDRESS_ACTION_TYPES
 } from '../actions/actionTypes'
 
 
@@ -24,11 +24,12 @@ const {
     REGISTER_A_TASK_REJECTED,
     REGISTER_A_TASK_REQUEST
 } = REGISTER_A_TASK_ACTION_TYPES
-// const {
-//     FORGOT_PASSWORD_REQUEST,
-//     FORGOT_PASSWORD_FULFILLED,
-//     FORGOT_PASSWORD_REJECTED
-// } = FORGOT_PASSWORD_ACTION_TYPES;
+
+const {
+    ADD_ADDRESS_REQUEST,
+    ADD_ADDRESS_FULFILLED,
+    ADD_ADDRESS_REJECTED,
+} = ADD_ADDRESS_ACTION_TYPES;
 
 const {
     LOGIN_WITH_PHONE_FULFILLED,
@@ -229,6 +230,28 @@ const authReducer = (state = initialState, action) => {
             }
 
         case ADD_EMAIL_REJECTED:
+            return {
+                ...state,
+                loading: false,
+                error: true,
+                errorMsg: action.payload.response
+            }
+
+        case ADD_ADDRESS_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: false
+            }
+
+        case ADD_ADDRESS_FULFILLED:
+            return {
+                ...state,
+                loading: false,
+                data: action.payload
+            }
+
+        case ADD_ADDRESS_REJECTED:
             return {
                 ...state,
                 loading: false,
