@@ -111,7 +111,7 @@ export class History extends Component {
                                 key={i}
                                 onPress={((e) => this.handleClick(e, l))}
                                 containerStyle={{ backgroundColor: "#F8FFFF" }}
-                                leftAvatar={{ source: require("../assets/icons/transactions.png") }}
+                                leftAvatar={{ source: require("../assets/icons/breadIcon.png") }}
                                 title={l.description}
                                 titleStyle={{ fontFamily: "Raleway-Bold", color: "#a4a4a4" }}
                                 subtitle={dayjs(l.createdAt).format("dddd, MMMM D YYYY, h:mm:ss a")}

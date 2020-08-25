@@ -74,7 +74,6 @@ export class Cart extends Component {
         const { loading } = this.props
         return (
             <ScrollView style={{ backgroundColor: "#F8FFFF" }}>
-                {loading && <Loader />}
                 <Header
                     containerStyle={styles.header}
                     leftComponent={
@@ -112,6 +111,7 @@ export class Cart extends Component {
                             </TouchableOpacity>
                         }
                     />
+                    {loading && <Loader />}
                     <View style={styles.centeredView}>
                         <View style={{ alignItems: "center", justifyContent: "center" }}>
                             <Text style={{
