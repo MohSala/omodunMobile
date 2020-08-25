@@ -117,35 +117,6 @@ export class Dashboard extends Component {
               >
                 <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>
-
-              {/* <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Text style={{
-                  fontFamily: "Raleway-Bold",
-                  marginTop: 10,
-                  textAlign: "left",
-                  color: "#a4a4a4",
-                  fontSize: 18
-                }}>Fill Your Delivery Address</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="What's Your Delivery Address?"
-                  underlineColorAndroid="transparent"
-                  keyboardType="default"
-                  autoCorrect={false}
-                  onChangeText={text => {
-                    this.setState({ fullName: text })
-                  }}
-                />
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={async () => {
-                    await AsyncStorage.clear();
-                    await this.props.navigation.navigate("Landing");
-                  }}
-                >
-                  <Text style={styles.textButton}>LOGOUT</Text>
-                </TouchableOpacity>
-              </View> */}
               <Card containerStyle={{ borderRadius: 10, shadowRadius: 5, marginBottom: 10 }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
                   <Image source={require("../assets/icons/avatarIcon.png")} />
@@ -205,9 +176,16 @@ export class Dashboard extends Component {
             }
             centerComponent={{ text: "Products", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
             rightComponent={
-              <TouchableOpacity style onPress={() => navigation.navigate("Cart", {
-                cartProducts: [...new Set(cartProducts)]
-              })}>
+              <TouchableOpacity style onPress={() => {
+                navigation.navigate("Cart", {
+                  cartProducts: [...new Set(cartProducts)]
+                })
+                cartProducts.length = 0;
+                return this.setState({
+                  addedNumber: 0
+                })
+              }
+              }>
                 <Image
                   source={require("../assets/icons/cartIcon.png")}
                   style={{ width: 40, height: 40 }}

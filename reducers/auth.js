@@ -9,7 +9,9 @@ import {
     GET_TRANSACTION_ACTION_TYPES,
     GET_FEW_TRANSACTION_ACTION_TYPES,
     REGISTER_A_TASK_ACTION_TYPES,
-    ADD_ADDRESS_ACTION_TYPES
+    ADD_ADDRESS_ACTION_TYPES,
+    GET_ADDRESS_ACTION_TYPES
+
 } from '../actions/actionTypes'
 
 
@@ -18,6 +20,12 @@ const {
     GET_FEW_TRANSACTION_REJECTED,
     GET_FEW_TRANSACTION_REQUEST
 } = GET_FEW_TRANSACTION_ACTION_TYPES;
+
+const {
+    GET_ADDRESS_FULFILLED,
+    GET_ADDRESS_REJECTED,
+    GET_ADDRESS_REQUEST
+} = GET_ADDRESS_ACTION_TYPES
 
 const {
     REGISTER_A_TASK_FULFILLED,
@@ -252,6 +260,28 @@ const authReducer = (state = initialState, action) => {
             }
 
         case ADD_ADDRESS_REJECTED:
+            return {
+                ...state,
+                loading: false,
+                error: true,
+                errorMsg: action.payload.response
+            }
+
+        case GET_ADDRESS_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: false
+            }
+
+        case GET_ADDRESS_FULFILLED:
+            return {
+                ...state,
+                loading: false,
+                data: action.payload
+            }
+
+        case GET_ADDRESS_REJECTED:
             return {
                 ...state,
                 loading: false,

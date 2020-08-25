@@ -7,6 +7,8 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
+    KeyboardAvoidingView,
+    Image,
     AsyncStorage
 } from 'react-native'
 import Loader from "../components/Loader";
@@ -57,9 +59,11 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     picture: {
+        marginTop: 20,
+        marginLeft: 10,
         ...StyleSheet.absoluteFillObject,
-        width: undefined,
-        height: undefined
+        width: 100,
+        height: 100,
     },
     subtitle: {
         fontFamily: "Raleway-Bold",
@@ -92,7 +96,7 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#F5F5F5',
         borderRadius: 15,
-        color: '#424242',
+        color: '#000',
         marginBottom: 20
     },
     signUpText: {
@@ -131,10 +135,12 @@ export class Login extends Component {
         const { loading, navigation } = this.props
         const { storedMobile, mobile } = this.state;
         return (
-            <View style={styles.container}>
+            <View
+                style={styles.container}
+            >
                 {loading && <Loader />}
                 <View style={styles.slider}>
-                    {/* <Image source={picture} style={styles.picture} /> */}
+                    <Image source={require("../assets/omodun1.png")} style={styles.picture} />
                     <View style={[styles.titleContainer, { transform }]}>
                         <Text style={{
                             fontSize: 80,

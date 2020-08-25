@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Dimensions, StyleSheet, Alert, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { Image, View, Dimensions, StyleSheet, Alert, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { connect } from "react-redux";
 import { createAccount } from "../actions/auth";
@@ -48,9 +48,11 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     picture: {
+        marginTop: 20,
+        marginLeft: 10,
         ...StyleSheet.absoluteFillObject,
-        width: undefined,
-        height: undefined
+        width: 100,
+        height: 100,
     },
     subtitle: {
         fontFamily: "Raleway-Regular",
@@ -133,7 +135,7 @@ export class Register extends Component {
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
                 style={styles.container}>
                 <View style={styles.slider}>
-                    {/* <Image source={picture} style={styles.picture} /> */}
+                    <Image source={require("../assets/omodun1.png")} style={styles.picture} />
                     <View style={[styles.titleContainer, { transform }]}>
                         <Text style={{
                             fontSize: 65,
@@ -172,6 +174,7 @@ export class Register extends Component {
                         placeholder="Phone Number"
                         underlineColorAndroid="transparent"
                         keyboardType="numeric"
+                        returnKeyType="done"
                         onChangeText={text => {
                             this.setState({ mobile: text })
                         }}

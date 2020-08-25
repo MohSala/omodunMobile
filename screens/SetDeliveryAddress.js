@@ -15,7 +15,7 @@ import {
 import { Header } from "react-native-elements";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 import { connect } from "react-redux";
-import { addDeliveryAddress } from "../actions/auth";
+import { addDeliveryAddress, getDeliveryAddress } from "../actions/auth";
 import { Root, Toast } from 'native-base';
 
 export class SetDeliveryAddress extends Component {
@@ -24,8 +24,20 @@ export class SetDeliveryAddress extends Component {
         currentAddress: ""
     }
 
-    componentDidMount = () => {
-
+    componentDidMount = async () => {
+        const { getDeliveryAddress } = this.props;
+        const mobile = await AsyncStorage.getItem("mobile");
+        await getDeliveryAddress(mobile);
+        if (this.props.error) {
+            return this.setState({
+                currentAddress: "Not Available"
+            })
+        }
+        else {
+            return this.setState(({
+                currentAddress: this.props.data
+            }))
+        }
     }
 
     handlesubmit = async () => {
@@ -37,79 +49,78 @@ export class SetDeliveryAddress extends Component {
             Alert.alert("Ooopps!", this.props.errorMsg.data.message)
         }
         else {
-            Toast.show({
-                text: 'Delivery Address Saved Successfully!',
-                buttonText: 'Okay',
-                type: "success"
-            })
+            Alert.alert("Alright!", "Delivery Address Saved Successfully!")
+            return this.componentDidMount()
         }
     }
 
 
 
     render() {
+        const { currentAddress } = this.state;
         return (
-            <Root>
-                <View style={{ backgroundColor: "#F8FFFF", flex: 1 }}>
-                    <Header
-                        containerStyle={styles.header}
-                        centerComponent={{ text: "Address", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
+            <View style={{ backgroundColor: "#F8FFFF", flex: 1 }}>
+                <Header
+                    containerStyle={styles.header}
+                    centerComponent={{ text: "Address", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
 
+                />
+                <View style={{ alignItems: "center", justifyContent: "center" }}>
+                    <Text style={{
+                        fontFamily: "Raleway-Bold",
+                        marginTop: 20,
+                        textAlign: "center",
+                        color: "#a4a4a4",
+                        fontSize: 18
+                    }}>Where Do You Want Us To Deliver Your Products?</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="What's Your Address?"
+                        underlineColorAndroid="transparent"
+                        keyboardType="default"
+                        autoCorrect={false}
+                        onChangeText={text => {
+                            this.setState({ address: text })
+                        }}
                     />
-                    <View style={{ alignItems: "center", justifyContent: "center" }}>
-                        <Text style={{
-                            fontFamily: "Raleway-Bold",
-                            marginTop: 20,
-                            textAlign: "center",
-                            color: "#a4a4a4",
-                            fontSize: 18
-                        }}>Where Do You Want Us To Deliver Your Products?</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="What's Your Address?"
-                            underlineColorAndroid="transparent"
-                            keyboardType="default"
-                            autoCorrect={false}
-                            onChangeText={text => {
-                                this.setState({ address: text })
-                            }}
-                        />
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={this.handlesubmit}
-                        >
-                            {!this.props.loading ?
-                                <Text style={styles.textButton}>SAVE</Text>
-                                :
-                                <ActivityIndicator size="small" color="#fff" />
-                            }
-                        </TouchableOpacity>
-                    </View>
-
-                    <View>
-                        <Text style={{
-                            fontFamily: "Raleway-Bold",
-                            marginTop: 20,
-                            textAlign: "left",
-                            color: "#a4a4a4",
-                            fontSize: 18,
-                            padding: 20
-                        }}>Current Home Address:</Text>
-                        <Text style={{
-                            fontFamily: "Raleway-SemiBold",
-                            textAlign: "center",
-                            color: "#a4a4a4",
-                            fontSize: 18,
-                        }}>Road #house J1, Victoria Garden city</Text>
-                    </View>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={this.handlesubmit}
+                    >
+                        {!this.props.loading ?
+                            <Text style={styles.textButton}>SAVE</Text>
+                            :
+                            <ActivityIndicator size="small" color="#fff" />
+                        }
+                    </TouchableOpacity>
                 </View>
-            </Root>
+
+                <View>
+                    <Text style={{
+                        fontFamily: "Raleway-Bold",
+                        marginTop: 20,
+                        textAlign: "left",
+                        color: "#a4a4a4",
+                        fontSize: 18,
+                        padding: 20
+                    }}>Current Home Address:</Text>
+                    <Text style={{
+                        fontFamily: "Raleway-SemiBold",
+                        textAlign: "center",
+                        color: "#a4a4a4",
+                        fontSize: 18,
+                        alignSelf: "center",
+                        width: SCREEN_WIDTH - 50
+                    }}>{!currentAddress ? "No Address Has Been Set" : currentAddress}</Text>
+                </View>
+            </View>
         )
     }
 }
 
 const mapDispatchToProps = dispatch => ({
-    addDeliveryAddress: data => dispatch(addDeliveryAddress(data))
+    addDeliveryAddress: data => dispatch(addDeliveryAddress(data)),
+    getDeliveryAddress: data => dispatch(getDeliveryAddress(data))
 });
 
 const mapStateToProps = state => ({

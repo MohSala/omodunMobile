@@ -23,38 +23,38 @@ export class History extends Component {
         modalVisible: false
     }
 
-    // componentDidMount = async () => {
-    //     const walletId = await AsyncStorage.getItem("walletId");
-    //     await this.props.getMyTransaction(walletId);
-    //     if (this.props.data) {
-    //         return this.setState({
-    //             list: this.props.data.data
-    //         })
-    //     } else {
-    //         Alert.alert("Ooopps!", this.props.errorMsg.data.message)
-    //     }
-    // }
+    componentDidMount = async () => {
+        const mobile = await AsyncStorage.getItem("mobile");
+        await this.props.getMyTransaction(mobile);
+        if (this.props.data) {
+            return this.setState({
+                list: this.props.data.data
+            })
+        } else {
+            Alert.alert("Ooopps!", this.props.errorMsg.data.message)
+        }
+    }
 
-    // setModalVisible = () => {
-    //     this.setState({ modalVisible: !this.state.modalVisible });
-    // }
+    setModalVisible = () => {
+        this.setState({ modalVisible: !this.state.modalVisible });
+    }
 
-    // updateIndex(selectedIndex) {
-    //     this.setState({ selectedIndex })
-    //     console.log("selectedIndex", selectedIndex);
-    // }
+    updateIndex(selectedIndex) {
+        this.setState({ selectedIndex })
+        console.log("selectedIndex", selectedIndex);
+    }
 
-    // onRefresh = async () => {
-    //     await this.setState({ refreshing: true });
-    //     await this.componentDidMount()
-    //     await this.setState({ refreshing: false });
-    // }
-    // handleClick = async (e, item) => {
-    //     await this.setState({
-    //         selectedTransaction: item,
-    //         modalVisible: true
-    //     })
-    // }
+    onRefresh = async () => {
+        await this.setState({ refreshing: true });
+        await this.componentDidMount()
+        await this.setState({ refreshing: false });
+    }
+    handleClick = async (e, item) => {
+        await this.setState({
+            selectedTransaction: item,
+            modalVisible: true
+        })
+    }
 
 
     render() {
@@ -62,7 +62,7 @@ export class History extends Component {
         const { selectedIndex, refresh, selectedTransaction, modalVisible } = this.state
         return (
             <View style={{ flex: 1, backgroundColor: '#F8FFFF' }}>
-                {/* <Modal
+                <Modal
                     animationType="slide"
                     transparent={false}
                     visible={modalVisible}
@@ -73,28 +73,39 @@ export class History extends Component {
                         </TouchableOpacity>
 
                         <View style={{ alignItems: "center" }}>
-                            <Text style={{ color: "#FFAC4A", fontFamily: "Raleway-Bold", fontSize: 24 }}>Transaction</Text>
+                            <Text style={{ color: "#82D3A3", fontFamily: "Raleway-Bold", fontSize: 24 }}>Transaction</Text>
                             <PricingCard
-                                color="#2b2424"
+                                color="#000"
                                 containerStyle={{ width: SCREEN_WIDTH - 50, borderRadius: 10 }}
                                 title={selectedTransaction.description}
                                 price={`N${parseInt(selectedTransaction.amount).toFixed(2)}`}
-                                info={[selectedTransaction.type, selectedTransaction.status, selectedTransaction.reference]}
+                                info={[selectedTransaction.type, selectedTransaction.reference]}
                                 titleStyle={{ fontFamily: "Raleway-Bold" }}
                                 button={{ title: dayjs(selectedTransaction.createdAt).format("dddd, MMMM D YYYY, h:mm:ss a") }}
                             />
 
                         </View>
                     </View>
-                </Modal> */}
+                </Modal>
                 <Header
                     containerStyle={styles.header}
-                    centerComponent={{ text: "Transactions", style: { fontFamily: "Raleway-Bold", color: "#a4a4a4", fontWeight: "bold", fontSize: 18 } }}
+                    centerComponent={{
+                        text: "Transactions",
+                        style: {
+                            fontFamily: "Raleway-Bold",
+                            color: "#a4a4a4",
+                            fontWeight: "bold",
+                            fontSize: 18
+                        }
+                    }}
                 />
                 <ScrollView
-                    refreshControl={<RefreshControl refreshing={refresh} onRefresh={this.onRefresh} />}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refresh}
+                            onRefresh={this.onRefresh} />}
                 >
-                    {/*   {this.props.loading ? <Loader /> :
+                    {this.props.loading ? <Loader /> :
                         this.state.list.map((l, i) => (
                             <ListItem
                                 key={i}
@@ -106,11 +117,11 @@ export class History extends Component {
                                 subtitle={dayjs(l.createdAt).format("dddd, MMMM D YYYY, h:mm:ss a")}
                                 subtitleStyle={{ fontFamily: "Raleway-Regular", color: "#a4a4a4" }}
                                 bottomDivider
-                                rightTitle={l.status}
-                                rightTitleStyle={{ fontFamily: "Raleway-Regular", fontSize: 12, color: l.status == "COMPLETED" ? "#8CC38B" : "#C38B8B" }}
+                                rightTitle={l.channel}
+                                rightTitleStyle={{ fontFamily: "Raleway-SemiBold", fontSize: 12, color: "#8CC38B" }}
                             />
                         ))
-                    }*/}
+                    }
 
                 </ScrollView>
             </View>

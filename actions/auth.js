@@ -13,7 +13,8 @@ import {
     GET_TRANSACTION_ACTION_TYPES,
     GET_FEW_TRANSACTION_ACTION_TYPES,
     REGISTER_A_TASK_ACTION_TYPES,
-    ADD_ADDRESS_ACTION_TYPES
+    ADD_ADDRESS_ACTION_TYPES,
+    GET_ADDRESS_ACTION_TYPES
 } from "./actionTypes";
 
 
@@ -28,6 +29,12 @@ const {
     ADD_ADDRESS_REJECTED,
     ADD_ADDRESS_REQUEST
 } = ADD_ADDRESS_ACTION_TYPES;
+
+const {
+    GET_ADDRESS_FULFILLED,
+    GET_ADDRESS_REJECTED,
+    GET_ADDRESS_REQUEST
+} = GET_ADDRESS_ACTION_TYPES
 
 const {
     REGISTER_A_TASK_FULFILLED,
@@ -295,6 +302,23 @@ const addDeliveryAddress = data => {
     }
 }
 
+const getDeliveryAddress = data => {
+    return async (dispatch) => {
+        dispatch(getAddressRequest());
+        try {
+            const response = await axios.get(
+                `${BASE_URL}/deliveryAddress?mobile=${data}`,
+
+            );
+            const { deliveryAddress } = response.data.data;
+            return dispatch(getAddressFulfilled(deliveryAddress));
+        } catch (error) {
+            console.log(error);
+            dispatch(getAddressRejected(error));
+        }
+    }
+}
+
 const forgotPassword = data => {
     return async (dispatch) => {
         dispatch(forgotPasswordRequest());
@@ -483,6 +507,20 @@ const addAddressRejected = (data) => ({
     payload: data
 });
 
+const getAddressRequest = () => ({
+    type: GET_ADDRESS_REQUEST
+});
+
+const getAddressFulfilled = data => ({
+    type: GET_ADDRESS_FULFILLED,
+    payload: data
+});
+
+const getAddressRejected = (data) => ({
+    type: GET_ADDRESS_REJECTED,
+    payload: data
+});
+
 
 
 export {
@@ -497,5 +535,6 @@ export {
     getMyTransaction,
     getFewTransaction,
     registerTask,
-    addDeliveryAddress
+    addDeliveryAddress,
+    getDeliveryAddress
 }
