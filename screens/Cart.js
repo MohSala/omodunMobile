@@ -70,7 +70,7 @@ export class Cart extends Component {
 
 
     render() {
-        const { modalVisible, cartProducts, currentAddress, mobile } = this.state
+        const { modalVisible, cartProducts, currentAddress, mobile, email } = this.state
         const { loading } = this.props
         return (
             <ScrollView style={{ backgroundColor: "#F8FFFF" }}>
@@ -172,13 +172,12 @@ export class Cart extends Component {
 
                             <PaystackWebView
                                 buttonText="PAY"
-                                showPayButton={true}
+                                showPayButton={!currentAddress ? false : true}
                                 paystackKey="pk_test_4237164a02b8612098dfcaf92b49c28a54c702f1"
                                 paystackSecretKey="sk_test_eb9e09d14a9494cc41966f0dfb0313cd373f06cc"
                                 amount={(this.sumTotal(cartProducts) + 1000)}
-                                billingEmail={this.state.email}
-                                disabled={true}
-                                billingMobile={this.state.mobile}
+                                billingEmail={email}
+                                billingMobile={mobile}
                                 ActivityIndicatorColor="green"
                                 SafeAreaViewContainer={{ marginTop: 1 }}
                                 SafeAreaViewContainerModal={{ marginTop: 1 }}
